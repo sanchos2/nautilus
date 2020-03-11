@@ -1,0 +1,6 @@
+DEVELOPMENT:
+  TEXT: 'from yaml'
+  ENV: 'development'
+  SQLALCHEMY_DATABASE_URI: 'sqlite:///webapp.db'
+
+
