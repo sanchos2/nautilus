@@ -12,6 +12,7 @@ def qr_parser(qr_text: str) -> dict:
         receipt_params = urllib.parse_qs(data.path, strict_parsing=True)
         for key, values in receipt_params.items():
             receipt_data[key] = values[0]
+        #  Из QR кода должны приходить ровно 6ть параметров
         assert len(receipt_data) == 6
     except (AssertionError, ValueError, AttributeError):
         print('Информация с QR кода некорректна')
@@ -67,15 +68,17 @@ def check_receipt(receipt_data: dict) -> str:
     Ответы сервера: 204 - Чек найден, 406 - Не найден или сумма(дата) некоректны, 400 - Не указанна дата(сумма)
     """
 
-    date_string = receipt_data['t']
-    date = datetime.strptime(date_string, '%Y%m%dT%H%M%S')
-    format_date = date.strftime('%Y-%m-%dT%H:%M')
+    # Можно ли здесь код засунуть в один try-except или лучше разделить как сейчас?
     try:
+        date_string = receipt_data['t']
+        date = datetime.strptime(date_string, '%Y%m%dT%H%M%S')
+        format_date = date.strftime('%Y-%m-%dT%H:%M')
         url_check_receipt = 'https://proverkacheka.nalog.ru:9999/v1/ofds/*/inns/*/fss/' + receipt_data['fn'] + \
                             '/operations/' + receipt_data['n'] + '/tickets/' + receipt_data['i'] + '?fiscalSign=' +\
                             receipt_data['fp'] + '&date=' + format_date + '&sum=' + receipt_data['s']
     except KeyError:
         return 'Key Error'
+
     try:
         check_receipt = requests.get(url_check_receipt)
         status_code = check_receipt.status_code
@@ -90,7 +93,8 @@ def check_receipt(receipt_data: dict) -> str:
 
 def get_receipt(receipt_data: dict, login: str, password: int) -> dict:
     """ Функция получения полных данных по кассовому чеку"""
-    headers = {'device-id': '',
+    headers = {
+               'device-id': '',
                'device-os': '',
                }
     try:
