@@ -1,12 +1,13 @@
 import yaml
 import os
 
-from flask import Flask, flash, render_template, redirect, url_for
-from flask_login import LoginManager, current_user, login_user, logout_user
+from flask import Flask, render_template
+from flask_login import LoginManager
 
-from webapp.models import db, User
-from webapp.forms import LoginForm, ReceiptForm
-from webapp.decorators import admin_required
+from webapp.user.models import db, User
+from webapp.admin.views import blueprint as admin_blueprint
+from webapp.receipt.views import blueprint as receipt_blueprint
+from webapp.user.views import blueprint as user_blueprint
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 file_yaml = os.path.join(basedir, '..', 'config.yaml')
@@ -23,11 +24,13 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
     login_manager.login_view = 'login'
+    app.register_blueprint(receipt_blueprint)
+    app.register_blueprint(user_blueprint)
+    app.register_blueprint(admin_blueprint)
 
     @login_manager.user_loader
     def load_user(user_id):
         return User.query.get(user_id)
-
     return app
 
 
@@ -40,45 +43,13 @@ def index():
     return render_template('index.html', page_title=title, name=app.config['TEXT'])
 
 
-@app.route('/login')
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-    title = 'Авторизация'
-    login_form = LoginForm()
-    return render_template('user/login.html', page_title=title, form=login_form)
 
 
-@app.route('/process-login', methods=['POST'])
-def process_login():
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            flash('Вы вошли на сайт')
-            return redirect(url_for('receipt'))
-    flash('Неправильное имя пользователя или пароль')
-    return redirect(url_for('login'))
 
 
-@app.route('/admin')
-@admin_required
-def admin_index():
-    return 'Привет админ'
 
 
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect(url_for('index'))
 
-
-@app.route('/receipt')
-def receipt():
-    title = 'Мои чеки'
-    receipt_form = ReceiptForm()
-    return render_template('receipt/receipt.html', page_title=title, form=receipt_form)
 
 #  run server
 #  set FLASK_APP=webapp && set FLASK_ENV=development && set FLASK_DEBUG=1 && flask run
