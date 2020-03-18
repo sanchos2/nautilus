@@ -1,0 +1,8 @@
+DEVELOPMENT:
+  TEXT: 'from yaml'
+  ENV: 'development'
+  SQLALCHEMY_DATABASE_URI: 'sqlite:///webapp.db'
+  SECRET_KEY: 'super_secret_key'
+  SQLALCHEMY_TRACK_MODIFICATIONS: True
+  REMEMBER_COOKIE_DURATION: timedelta(days=5)
+

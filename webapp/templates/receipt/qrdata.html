@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div class="alert alert-warning" role="alert">
+    {% for message in messages %}
+    {{ message }} <br>
+    {% endfor %}
+</div>
+{% endif %}
+{% endwith %}
+<h4> Перевод qr text в словарь</h4>
+{{ data_from_qr }}
+<h4> Проверка валидности чека</h4>
+{{ data_from_receipt_valid }}
+<h4> Номенклатура чека </h4>
+<table class="table table-striped">
+
+    <tr>
+        <thead>
+        <th scope="col">Наименование</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Количество</th>
+        <th scope="col">Сумма</th>
+        </thead>
+    </tr>
+    {% for items in data_from_receipt%}
+    <tr>
+        <tbody>
+        <td>{{items['name']}}</td>
+        <td>{{items['price']/100}}</td>
+        <td>{{items['quantity']}}</td>
+        <td>{{items['sum']/100}}</td>
+        </tbody>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
