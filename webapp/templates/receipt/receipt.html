@@ -9,6 +9,7 @@
 </div>
 {% endif %}
 {% endwith %}
+{{ page_title }}
 <form action="{{ url_for('receipt.process_qrparser') }}" method="post">
     {{ form.hidden_tag()}}
     <div class="form-group">

@@ -34,3 +34,8 @@ def logout():
     logout_user()
     flash('Вы успешно разлогинились')
     return redirect(url_for('index'))
+
+@blueprint.route('/recovery')
+def my_receipt():
+    title = 'Страница восстановления пароля'
+    return render_template('user/recovery.html', page_title=title)

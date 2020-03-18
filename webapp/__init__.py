@@ -43,13 +43,5 @@ def index():
     return render_template('index.html', page_title=title, name=app.config['TEXT'])
 
 
-
-
-
-
-
-
-
-
 #  run server
 #  set FLASK_APP=webapp && set FLASK_ENV=development && set FLASK_DEBUG=1 && flask run

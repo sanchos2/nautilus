@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -12,9 +12,19 @@
     <title>{{ page_title }}</title>
 </head>
 <body>
-{% include 'menu.html' %}
-{% block content %}
-{% endblock %}
+{% include 'footer.html' %}
+<div class="container">
+    <div class="row">
+
+        <div class="col-2">
+            {% include 'menu.html' %}
+        </div>
+        <div class="col-10">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

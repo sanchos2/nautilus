@@ -13,7 +13,7 @@ def receipt():
     if not current_user.is_authenticated:
         return redirect(url_for('user.login'))
     else:
-        title = 'Мои чеки'
+        title = 'Проверка чека'
         receipt_form = ReceiptForm()
         return render_template('receipt/receipt.html', page_title=title, form=receipt_form)
 
@@ -41,3 +41,15 @@ def process_qrparser():
             flash('Что то пошло не так :( Мы попробуем проверить Ваш чек позднее')
             flash(data_from_receipt_valid)
             return redirect(url_for('receipt.receipt'))
+
+
+@blueprint.route('/my-receipt')
+def my_receipt():
+    title = 'Мои чеки'
+    return render_template('receipt/my_receipt.html', page_title=title)
+
+
+@blueprint.route('/my-outlay')
+def my_outlay():
+    title = 'Мои расходы'
+    return render_template('receipt/my_outlay.html', page_title=title)
