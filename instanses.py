@@ -7,8 +7,8 @@ class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key = True)
-    user_name = Column(String)
-    user_pas = Column(String)
+    name = Column(String)
+    pas = Column(String)
     nick_name = Column(String)
     telegram_id = Column(String)
     email = Column(String)
@@ -29,16 +29,16 @@ class Purchase(Base):
 
 
 content = Table('content', Base.metadata,
-            Column('check_id', Integer, ForeignKey('purchase.id')),
-            Column('product', String),
-            Column('price', Integer),
-            Column('quantity', Integer),
-            Column('sum', Integer),
-            Column('category', String),
-            Column('subcategory', Integer)
-            )
+    Column('check_id', Integer, ForeignKey('purchase.id')),
+    Column('product', String),
+    Column('price', Integer),
+    Column('quantity', Integer),
+    Column('sum', Integer),
+    Column('category', String),
+    Column('subcategory', Integer)
+)
 
-family_mode = Table('family_mode', Base.metadata,
-                    Column('user_id', Integer, ForeignKey('users.id')),
-                    Column('relative', Integer, ForeignKey('users.id')),
-                    )
+users_relatives = Table('users_relatives', Base.metadata,
+    Column('user_id', Integer, ForeignKey('users.id')),
+    Column('relative', Integer, ForeignKey('users.id')),
+)

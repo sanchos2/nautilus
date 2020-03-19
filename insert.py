@@ -1,6 +1,6 @@
 from datetime import date
 
-from instanses import User, Purchase, content, family_mode
+from instanses import User, Purchase, content, users_relatives
 from base import Base, Session, engine
 
 
