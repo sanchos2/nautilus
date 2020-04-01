@@ -147,8 +147,3 @@ def get_receipt(receipt_data: Dict, login: str, password: int) -> Dict:
     except ValueError:
         print(full_receipt.status_code, full_receipt.text)
         return {}
-
-
-if __name__ == '__main__':
-    qr = qr_parser('t=20200229T091700&s=72.00&fn=929000100600931&i=68739&fp=1270824322&n=1')
-    print(check_receipt(qr))

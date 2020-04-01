@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning" role="alert">
+        {% for message in messages %}
+        {{ message }} <br>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <h2>{{ page_title }}</h2>
+</div>
+<div>
+    <h4 id="qr">Тут выводятся данные из чека</h4>
+</div>
+<table class="table table-striped">
+    <tr>
+        <thead>
+        <th scope="col">Дата</th>
+        <th scope="col">Контрагент</th>
+        <th scope="col">Сумма</th>
+        </thead>
+    </tr>
+    {% for receipt in receipt_dict.values() %}
+    <tr>
+        <tbody>
+        <td><a href="/receipt/my-detailed-receipt">{{ receipt['data'] }}</a></td>
+        <td><a href="{{receipt}}">{{ receipt['name'] }}</a></td>
+        <td><a href="{{receipt}}">{{ receipt['sum'] }}</a></td>
+        </tbody>
+    </tr>
+    {% endfor %}
+</table>
+{{ data }}
+<button type="button" class="btn btn-primary" onclick="window.location.href = '/receipt/qrscaner'">Добавить чек</button>
+{% endblock %}

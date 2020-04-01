@@ -1,3 +1,7 @@
+# MY
+config.yaml
+webapp/config.py
+webapp/receipt/my_data.py
 .idea/
 webapp.db
 my_data.py

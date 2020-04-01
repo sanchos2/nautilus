@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2>{{ page_title }}</h2>
+</div>
+<div>
+    <h4 id="qr">Тут вывводятся ДЕТАЛЬНЫЕ данные из чека</h4>
+</div>
+<table class="table table-striped">
+    <tr>
+        <thead>
+        <th scope="col">Наименование</th>
+        <th scope="col">Цена</th>
+        <th scope="col">Количество</th>
+        <th scope="col">Сумма</th>
+        <th scope="col">Категория</th>
+        </thead>
+    </tr>
+    {% for receipt in receipt_dict_detailed.values() %}
+    <tr>
+        <tbody>
+        <td>{{ receipt['name'] }}</td>
+        <td>{{ receipt['price'] }}</td>
+        <td>{{ receipt['qnt'] }}</td>
+        <td>{{ receipt['sum'] }}</td>
+        <td>{{ receipt['cat'] }}</td>
+        </tbody>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
