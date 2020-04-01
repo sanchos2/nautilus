@@ -1,6 +1,42 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container">
-    <h2>Сканер QR кода</h2>
-</div>
+<h2>{{ page_title }}</h2>
+<p id="qr"></p>
+<video width="30%" muted playsinline id="video"></video>
+    <script type="module">
+        import QrScanner from '/static/qr-scanner.min.js';
+        QrScanner.WORKER_PATH = '/static/qr-scanner-worker.min.js';
+        onclick = function () {
+            const videoElem = document.getElementById('video');
+            const qrScanner = new QrScanner(videoElem, result => {
+
+                fetch('http://127.0.0.1:5000/api/v1/qrscaner-process', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'plain/text',
+                        'Content-Type': 'plain/text, charset=UTF-8'
+                    },
+                    body: result
+                })
+                    .then(
+                        function (response) {
+                            if (response.status !== 200) {
+                                console.log('Some problem with handler: ' + response.status);
+                                document.getElementById('qr').innerHTML ='Ошибка с отправкой QR кода на сервер,' +
+                                    ' повторите операцию позже.';
+                                return;
+                            }
+                            response.json().then(function (data) {
+                                console.log(data);
+                                document.getElementById('qr').innerHTML = 'QR код успешно отправлен на сервер';
+                                window.location.href = '/receipt/my-receipt';
+                            });
+                        })
+                setTimeout(function () {
+                    qrScanner.destroy();
+                }, 100);
+            });
+            qrScanner.start();
+        }
+    </script>
 {% endblock %}
