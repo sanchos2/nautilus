@@ -5,6 +5,7 @@ webapp/receipt/my_data.py
 .idea/
 webapp.db
 my_data.py
+run.bat
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

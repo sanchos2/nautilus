@@ -2,4 +2,4 @@ DEVELOPMENT:
   ENV: 'development'
   SQLALCHEMY_DATABASE_URI: 'sqlite:///webapp.db'
   SECRET_KEY: 'super_secret_key'
-  SQLALCHEMY_TRACK_MODIFICATIONS: True
+  SQLALCHEMY_TRACK_MODIFICATIONS: False
