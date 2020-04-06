@@ -5,7 +5,9 @@ from flask import Flask, render_template, redirect, url_for
 from flask_login import LoginManager, current_user
 from flask_migrate import Migrate
 
-from webapp.user.models import db, User
+from webapp.db import db
+from webapp.user.models import User
+from webapp.receipt.models import Receipt, Purchase
 from webapp.admin.views import blueprint as admin_blueprint
 from webapp.api.views import blueprint as api_blueprint
 from webapp.receipt.views import blueprint as receipt_blueprint

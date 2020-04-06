@@ -74,6 +74,18 @@ def recovery_pass(phone: str) -> str:
         return 'Незарегистрированная учетная запись'
 
 
+# функцию вынес для записи в базу данных корректного формата дата\время
+def format_date(raw_datetime: str) -> str:
+    if len(raw_datetime) == 13:  # если в формате не учтены секунды добавляем 00 секунд
+        raw_datetime = raw_datetime + '00'
+    try:
+        date = datetime.strptime(raw_datetime, '%Y%m%dT%H%M%S')
+        return date.strftime('%Y-%m-%dT%H:%M')
+    except ValueError:
+        print('Не возможно распарсить строку date time')
+        return False
+
+
 def check_receipt(receipt_data: Dict) -> bool:  # TODO таймаут, счетчик
     """
     Функция проверки валидности чека
@@ -81,21 +93,21 @@ def check_receipt(receipt_data: Dict) -> bool:  # TODO таймаут, счет�
     500 - irkkt db timeout
     """
 
-    date_string = receipt_data['t']
-    if len(date_string) == 13:  # если в формате не учтены секунды добавляем 00 секунд
-        date_string = date_string + '00'
-    try:
-        date = datetime.strptime(date_string, '%Y%m%dT%H%M%S')
-        format_date = date.strftime('%Y-%m-%dT%H:%M')
-    except ValueError:
-        print('Не возможно распарсить строку date time')
-        return False
+    # date_string = receipt_data['t']
+    # if len(date_string) == 13:  # если в формате не учтены секунды добавляем 00 секунд
+    #     date_string = date_string + '00'
+    # try:
+    #     date = datetime.strptime(date_string, '%Y%m%dT%H%M%S')
+    #     format_date = date.strftime('%Y-%m-%dT%H:%M')
+    # except ValueError:
+    #     print('Не возможно распарсить строку date time')
+    #     return False
 
     try:
         sum = int(float(receipt_data['s']) * 100)
         path = '/v1/ofds/*/inns/*/fss/' + receipt_data['fn'] + '/operations/' + receipt_data['n'] + '/tickets/' + \
                receipt_data['i']
-        query = 'fiscalSign=' + receipt_data['fp'] + '&date=' + format_date + '&sum=' + str(sum)
+        query = 'fiscalSign=' + receipt_data['fp'] + '&date=' + format_date(receipt_data['t']) + '&sum=' + str(sum)
         par = ('https', 'proverkacheka.nalog.ru:9999', path, '', query, '')
         url_check_receipt = urllib.urlunparse(par)
         print(url_check_receipt)
@@ -147,3 +159,8 @@ def get_receipt(receipt_data: Dict, login: str, password: int) -> Dict:
     except ValueError:
         print(full_receipt.status_code, full_receipt.text)
         return {}
+
+
+if __name__ == '__main__':
+    a = format_date('20200325T0841')
+    print(a)

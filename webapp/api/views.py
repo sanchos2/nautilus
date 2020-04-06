@@ -1,14 +1,19 @@
 from flask import Blueprint, jsonify, request, redirect, flash, render_template, url_for, make_response
+from flask_login import current_user, login_required
 
+from webapp.db import db
+from webapp.user.models import User
 from webapp.receipt.my_data import auth_login, auth_password
-from webapp.receipt.find_receipt import qr_parser, check_receipt, get_receipt
+from webapp.receipt.find_receipt import qr_parser, check_receipt, get_receipt, format_date
 from webapp.receipt.forms import ReceiptForm
+from webapp.receipt.models import Receipt, Purchase
 
 blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 
 
 # данный маршрут в прод не идет
 @blueprint.route('/process-qrparser', methods=['POST'])
+@login_required
 def process_qrparser():
     form = ReceiptForm()
     if form.validate_on_submit():
@@ -34,8 +39,22 @@ def process_qrparser():
 
 
 @blueprint.route('/qrscaner-process', methods=['POST'])
+@login_required
 def qrscaner_process():
     qr_text = request.data.decode('utf-8')
     data_from_qr = qr_parser(qr_text)
-    # тут в теории производим запись в базу данных
+    # fn_number - fn, fd_number - i, fpd_number - fp
+    try:
+        if Purchase.query.filter_by(fn_number=data_from_qr['fn']).first():
+            raise ValueError('fn_number in Table!!!')
+        else:
+            new_purchase = Purchase(user_id=current_user.id, fn_number=data_from_qr['fn'],
+                                    fd_number=data_from_qr['i'], fpd_number=data_from_qr['fp'],
+                                    receipt_type=data_from_qr['n'], sum=data_from_qr['s'],
+                                    date=format_date(data_from_qr['t']))
+        db.session.add(new_purchase)
+        db.session.commit()
+    except ValueError:
+        print('fn_number уже есть в таблице! Чек не добавляем.')
+        flash('Этот чек Вы уже добавляли!')
     return make_response(jsonify(data_from_qr), 200)

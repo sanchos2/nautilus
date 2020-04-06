@@ -42,8 +42,8 @@ def logout():
 @login_required
 def profile():
     title = 'Страница профиля пользователя'
-    user = current_user
-    return render_template('user/profile.html', page_title=title, dev_message=user)
+    user = current_user.username
+    return render_template('user/profile.html', page_title=title, dev_message=current_user.username)
 
 
 @blueprint.route('/recovery')
@@ -66,7 +66,7 @@ def register():
 def process_register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        new_user = User(username=form.username.data, email=form.email.data, telephone=form.telephone.data, role='user')
+        new_user = User(username=form.username.data, email=form.email.data, fns_login=form.fns_login.data, role='user')
         new_user.set_password(form.password.data)
         db.session.add(new_user)
         db.session.commit()

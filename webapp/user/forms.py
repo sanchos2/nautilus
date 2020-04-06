@@ -4,6 +4,7 @@ from wtforms.validators import DataRequired, Email, EqualTo, Length, ValidationE
 
 from webapp.user.models import User
 
+
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()], render_kw={'class': 'form-control'})
     password = PasswordField('Пароль', validators=[DataRequired()], render_kw={'class': 'form-control'})
@@ -17,8 +18,9 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()], render_kw={'class': 'form-control'})
     password2 = PasswordField('Повторите пароль', validators=[DataRequired(), EqualTo('password')],
                               render_kw={'class': 'form-control'})
-    telephone = DecimalField('Ведите номер телефона в формате +71001232121',
+    fns_login = StringField('Ведите номер телефона в формате +71001232121',
                              validators=[DataRequired(), Length(min=12, max=12)], render_kw={'class': 'form-control'})
+    fns_password = PasswordField('Пароль от KKT-NALOG', render_kw={'class': 'form-control'})
     submit = SubmitField('Зарегистрироваться', render_kw={'class': 'btn btn-primary'})
 
     def validate_username(self, username):
@@ -31,8 +33,8 @@ class RegistrationForm(FlaskForm):
         if email_count > 0:
             raise ValidationError('Пользователь с таким email уже зарегистрирован')
 
-    def validate_telephone(self, telephone):
-        telephone_count = User.query.filter_by(telephone=telephone.data).count()
-        if telephone_count > 0:
+    def validate_fns_login(self, fns_login):
+        fns_login_count = User.query.filter_by(fns_login=fns_login.data).count()
+        if fns_login_count > 0:
             raise ValidationError('Пользователь с таким номером телефона уже зарегистрирован')
 
