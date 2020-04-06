@@ -52,8 +52,8 @@ def qrscaner_process():
                                     fd_number=data_from_qr['i'], fpd_number=data_from_qr['fp'],
                                     receipt_type=data_from_qr['n'], sum=data_from_qr['s'],
                                     date=format_date(data_from_qr['t']))
-        db.session.add(new_purchase)
-        db.session.commit()
+            db.session.add(new_purchase)
+            db.session.commit()
     except ValueError:
         print('fn_number уже есть в таблице! Чек не добавляем.')
         flash('Этот чек Вы уже добавляли!')
