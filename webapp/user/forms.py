@@ -18,8 +18,8 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()], render_kw={'class': 'form-control'})
     password2 = PasswordField('Повторите пароль', validators=[DataRequired(), EqualTo('password')],
                               render_kw={'class': 'form-control'})
-    fns_login = StringField('Ведите номер телефона в формате +71001232121',
-                             validators=[DataRequired(), Length(min=12, max=12)], render_kw={'class': 'form-control'})
+    fns_login = StringField('Ведите номер телефона в формате +71001232121(будет использован для регистрации в ФНС)',
+                            validators=[DataRequired(), Length(min=12, max=12)], render_kw={'class': 'form-control'})
     fns_password = PasswordField('Пароль от KKT-NALOG', render_kw={'class': 'form-control'})
     submit = SubmitField('Зарегистрироваться', render_kw={'class': 'btn btn-primary'})
 
@@ -38,3 +38,11 @@ class RegistrationForm(FlaskForm):
         if fns_login_count > 0:
             raise ValidationError('Пользователь с таким номером телефона уже зарегистрирован')
 
+
+class ProfileForm(FlaskForm):
+    username = StringField('Имя пользователя', render_kw={'class': 'form-control'})
+    email = StringField('Email', validators=[Email()], render_kw={'class': 'form-control'})
+    fns_login = StringField('Ведите номер телефона в формате +71001232121(будет использован для регистрации в ФНС)',
+                            validators=[Length(min=12, max=12)], render_kw={'class': 'form-control'})
+    fns_password = PasswordField('Пароль от KKT-NALOG', render_kw={'class': 'form-control'})
+    submit = SubmitField('Обновить профиль', render_kw={'class': 'btn btn-primary'})

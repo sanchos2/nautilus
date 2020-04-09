@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, flash, url_for
 from flask_login import current_user, logout_user, login_user, login_required
 
 from webapp import db
-from webapp.user.forms import LoginForm, RegistrationForm
+from webapp.user.forms import LoginForm, RegistrationForm, ProfileForm
 from webapp.user.models import User
 
 blueprint = Blueprint('user', __name__, url_prefix='/users')
@@ -38,12 +38,25 @@ def logout():
     return redirect(url_for('index'))
 
 
-@blueprint.route('/profile/')
+@blueprint.route('/profile/<username>')
 @login_required
-def profile():
+def profile(username):
     title = 'Страница профиля пользователя'
-    user = current_user.username
-    return render_template('user/profile.html', page_title=title, dev_message=current_user.username)
+    user = User.query.filter_by(username=username).first_or_404()
+    # return render_template('user/profile.html', page_title=title, user=user)
+    profile_form = ProfileForm()
+    return render_template('user/profile.html', page_title=title, form=profile_form, user=user)
+
+
+@blueprint.route('/process-profile', methods=['POST'])
+def process_profile():
+    form = ProfileForm()
+    if form.validate_on_submit():
+        flash('Вы успешно обновили свой профиль')
+        return redirect(url_for('receipt.my_receipt'))
+    else:
+        flash('Вы не внесли изменений в свой профиль')
+        return redirect(url_for('receipt.my_receipt'))
 
 
 @blueprint.route('/recovery')

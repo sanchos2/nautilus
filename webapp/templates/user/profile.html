@@ -1,7 +1,38 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-    <h3>{{page_title}}</h3>
-    <p>{{dev_message}}</p>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-danger" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <div class="row">
+        <div class="col-sm">
+            <form action="{{ url_for('user.process_profile') }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    {{ form.username.label }} <br>
+                    {{ form.username() }}
+                </div>
+                <div class="form-group">
+                    {{ form.email.label }} <br>
+                    {{ form.email() }}
+                </div>
+                <div class="form-group">
+                    {{ form.fns_login.label }} <br>
+                    {{ form.fns_login() }}
+                </div>
+                <div class="form-group">
+                    {{ form.fns_password.label }} <br>
+                    {{ form.fns_password }}
+                </div>
+                <p> {{ form.submit() }} </p>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}

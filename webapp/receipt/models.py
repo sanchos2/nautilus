@@ -11,6 +11,7 @@ class Purchase(db.Model):
     receipt_type = db.Column(db.String)
     date = db.Column(db.String)
     sum = db.Column(db.Integer)
+    valid = db.Column(db.String)
 
     def __repr__(self):
         return f'<Покупка пользователя - {self.user_id}, за дату - {self.date}, на сумму - {self.sum}'

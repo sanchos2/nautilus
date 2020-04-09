@@ -80,7 +80,7 @@ def format_date(raw_datetime: str) -> str:
         raw_datetime = raw_datetime + '00'
     try:
         date = datetime.strptime(raw_datetime, '%Y%m%dT%H%M%S')
-        return date.strftime('%Y-%m-%dT%H:%M')
+        return date.strftime('%Y-%m-%d %H:%M') #убрал Т между датой и временем
     except ValueError:
         print('Не возможно распарсить строку date time')
         return False
@@ -140,6 +140,7 @@ def get_receipt(receipt_data: Dict, login: str, password: int) -> Dict:
         'device-id': '',
         'device-os': '',
     }
+    # headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0'}
     try:
         url_receipt = 'https://proverkacheka.nalog.ru:9999/v1/inns/*/kkts/*/fss/' + receipt_data['fn'] + \
                       '/tickets/' + receipt_data['i'] + '?fiscalSign=' + receipt_data['fp'] + \
@@ -159,8 +160,3 @@ def get_receipt(receipt_data: Dict, login: str, password: int) -> Dict:
     except ValueError:
         print(full_receipt.status_code, full_receipt.text)
         return {}
-
-
-if __name__ == '__main__':
-    a = format_date('20200325T0841')
-    print(a)

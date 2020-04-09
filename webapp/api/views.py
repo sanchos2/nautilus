@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request, redirect, flash, render_template,
 from flask_login import current_user, login_required
 
 from webapp.db import db
-from webapp.user.models import User
 from webapp.receipt.my_data import auth_login, auth_password
 from webapp.receipt.find_receipt import qr_parser, check_receipt, get_receipt, format_date
 from webapp.receipt.forms import ReceiptForm

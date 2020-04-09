@@ -58,3 +58,8 @@ def index():
 # tables"
 # RUN MIGRATION  flask db upgrade
 # ЗАПУСК МИГРАЦИИ НА СУЩЕСТВУЮЩЕЙ БАЗЕ flask db stamp id-миграции
+"""TODO
+добавить нормальный header в find_receipt.py
+добавить нормальную дату.время в таблицу purchase
+планировщик через Celery
+"""
