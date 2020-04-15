@@ -49,17 +49,3 @@ def index():
         return redirect(url_for('receipt.my_receipt'))
     title = 'Nautilus'
     return render_template('index.html', page_title=title, name='Сервис контроля за личными расходами')
-
-
-#  run server
-#  set FLASK_APP=webapp && set FLASK_ENV=development && set FLASK_DEBUG=1 && flask run --host 192.168.0.39 --cert=adhoc
-# MIGRATION INIT DB set FLASK_APP=webapp && flask db init
-# MAKE MIGRATION set FLASK_APP=webapp && flask db migrate -m "users and news
-# tables"
-# RUN MIGRATION  flask db upgrade
-# ЗАПУСК МИГРАЦИИ НА СУЩЕСТВУЮЩЕЙ БАЗЕ flask db stamp id-миграции
-"""TODO
-добавить нормальный header в find_receipt.py
-добавить нормальную дату.время в таблицу purchase
-планировщик через Celery
-"""

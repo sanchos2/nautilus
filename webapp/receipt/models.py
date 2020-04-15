@@ -9,12 +9,12 @@ class Purchase(db.Model):
     fd_number = db.Column(db.String)
     fpd_number = db.Column(db.String)
     receipt_type = db.Column(db.String)
-    date = db.Column(db.String)
+    date = db.Column(db.DateTime)
     sum = db.Column(db.Integer)
     valid = db.Column(db.String)
 
     def __repr__(self):
-        return f'<Покупка пользователя - {self.user_id}, за дату - {self.date}, на сумму - {self.sum}'
+        return f'<Покупка - {self.id}, за дату - {self.date}, на сумму - {self.sum}, валидность - {self.valid}'
 
 
 class Receipt(db.Model):
