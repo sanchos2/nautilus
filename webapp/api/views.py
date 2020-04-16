@@ -44,7 +44,7 @@ def qrscaner_process():
     data_from_qr = qr_parser(qr_text)
     # fn_number - fn, fd_number - i, fpd_number - fp
     try:
-        if Purchase.query.filter_by(fn_number=data_from_qr['fn']).first():
+        if Purchase.query.filter_by(fd_number=data_from_qr['i']).first(): # TODO сделать проверку по трем параметрам чека
             raise ValueError('fn_number in Table!!!')
         else:
             new_purchase = Purchase(user_id=current_user.id, fn_number=data_from_qr['fn'],

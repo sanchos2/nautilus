@@ -4,7 +4,7 @@ import urllib.parse as urllib
 
 from webapp.db import db
 from webapp.receipt.models import Receipt, Purchase
-from webapp.user.models import User
+
 
 """протестировать функцию т.к. возможны проблемы с сервером налоговой!!!"""
 
@@ -29,7 +29,9 @@ def receipt_valid_handler():
             print('Неизвестный ключ словаря')
 
         try:
-            check_receipt = requests.get(url_check_receipt)
+            auth_login = items.user.fns_login
+            auth_password = items.user.fns_password
+            check_receipt = requests.get(url_check_receipt, auth=HTTPBasicAuth(auth_login, auth_password))
             status_code = check_receipt.status_code
             text = check_receipt.text
             if status_code != 204:
@@ -71,9 +73,9 @@ def receipt_get_handler():
             full_receipt.raise_for_status()
             data = full_receipt.json()
             if data: # TODO оптимизировать. м.б. вынести в функцию
-                if not Receipt.query.filter(Receipt.receipt_id == items.id).count() > 0: # Так правильно?
+                if not Receipt.query.filter(Receipt.purchase_id == items.id).count() > 0: # Так правильно?
                     for pozition in data['document']['receipt']['items']:
-                        new_receipt = Receipt(receipt_id=items.id, product=pozition['name'], price=pozition['price'],
+                        new_receipt = Receipt(purchase_id=items.id, product=pozition['name'], price=pozition['price'],
                                               quantity=pozition['quantity'], sum=pozition['sum'])
                         db.session.add(new_receipt)
                         db.session.commit()
@@ -108,3 +110,24 @@ def registration_fns(email: str, name: str, phone: str) -> str:
         return 'Сетевая ошибка'
     except ValueError:
         return 'Пользователь уже создан или неправильный формат телефона / email'
+
+
+def recovery_pass(phone: str) -> str:
+    """"
+    Функция востановления пароля ФНС
+    Ответы сервера: 204 - Успешно, 404 - Not found
+    """
+    recovery_url = 'https://proverkacheka.nalog.ru:9999/v1/mobile/users/restore'
+    data = {'phone': phone}
+    try:
+        recovery_request = requests.post(recovery_url, json=data)
+        status_code = recovery_request.status_code
+        text = recovery_request.text
+        if status_code != 204:
+            return text
+        else:
+            return 'Запрос восстановления пароля выполнен успешно. Ожидайте СМС'
+    except requests.RequestException:
+        return 'Сетевая ошибка'
+    except ValueError:
+        return 'Незарегистрированная учетная запись'

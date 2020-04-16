@@ -5,7 +5,7 @@ from webapp.receipt.utils.receipt_handler import receipt_valid_handler, receipt_
 
 app = create_app()
 with app.app_context():
-    #receipt_valid_handler()
+    receipt_valid_handler()
     receipt_get_handler()
 
 sys.exit(0)

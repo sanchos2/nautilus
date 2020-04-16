@@ -52,3 +52,9 @@ class RegisterFnsForm(FlaskForm):
         fns_login_count = User.query.filter_by(fns_login=fns_login.data).count()
         if fns_login_count > 0:
             raise ValidationError('Пользователь с таким номером телефона уже зарегистрирован')
+
+
+class RecoveryFnsForm(FlaskForm):
+    telephone = StringField('Ведите номер телефона в формате +7ХХХХХХХХХХ',
+                            validators=[DataRequired(), Length(min=12, max=12)], render_kw={'class': 'form-control'})
+    submit = SubmitField('Запросить пароль', validators=[DataRequired()], render_kw={'class': 'btn btn-primary'})

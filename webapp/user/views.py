@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, redirect, flash, url_for, request
 from flask_login import current_user, logout_user, login_user, login_required
 
 from webapp import db
-from webapp.receipt.utils.receipt_handler import registration_fns
-from webapp.user.forms import LoginForm, RegistrationForm, ProfileForm, RegisterFnsForm
+from webapp.receipt.utils.receipt_handler import registration_fns, recovery_pass
+from webapp.user.forms import LoginForm, RegistrationForm, ProfileForm, RegisterFnsForm, RecoveryFnsForm
 from webapp.user.models import User
 
 blueprint = Blueprint('user', __name__, url_prefix='/users')
@@ -50,7 +50,9 @@ def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
     profile_form = ProfileForm()
     register_fns_form = RegisterFnsForm()
-    return render_template('user/profile.html', page_title=title, form=profile_form, form_fns=register_fns_form, user=user)
+    recovery_fns_form = RecoveryFnsForm()
+    return render_template('user/profile.html', page_title=title, form=profile_form,
+                           form_fns=register_fns_form, form_recovery=register_fns_form, user=user)
 
 
 @blueprint.route('/process-profile', methods=['POST'])
@@ -115,6 +117,22 @@ def process_register_fns(): # TODO продумать возвращение р�
         name = current_user.username
         phone = form.telephone.data
         registration_fns(email, name, phone)
+        flash('Ждите SMS от KKT-NALOG')
+        return redirect(url_for('user.profile', username=current_user.username))
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'Ошибка в поле "{getattr(form, field).label.text}": - {error}')
+        return redirect(url_for('user.profile', username=current_user.username))
+
+
+@blueprint.route('/process-recovery-fns', methods=['POST'])
+@login_required
+def process_recovery_fns(): # TODO продумать возвращение ретурнов через flash
+    form = RecoveryFnsForm()
+    if form.validate_on_submit():
+        phone = form.telephone.data
+        recovery_pass(phone)
         flash('Ждите SMS от KKT-NALOG')
         return redirect(url_for('user.profile', username=current_user.username))
     else:
