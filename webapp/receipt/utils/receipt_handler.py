@@ -4,7 +4,7 @@ import urllib.parse as urllib
 
 from webapp.db import db
 from webapp.receipt.models import Receipt, Purchase
-from webapp.receipt.my_data import auth_password, auth_login
+from webapp.user.models import User
 
 """протестировать функцию т.к. возможны проблемы с сервером налоговой!!!"""
 
@@ -29,7 +29,7 @@ def receipt_valid_handler():
             print('Неизвестный ключ словаря')
 
         try:
-            check_receipt = requests.get(url_check_receipt, auth=HTTPBasicAuth(auth_login, auth_password))
+            check_receipt = requests.get(url_check_receipt)
             status_code = check_receipt.status_code
             text = check_receipt.text
             if status_code != 204:
@@ -49,7 +49,7 @@ def receipt_valid_handler():
 
 
 def receipt_get_handler():
-    receipt = Purchase.query.filter(Purchase.valid.is_(True)).all()
+    receipt = Purchase.query.filter(Purchase.valid.is_(True)).all()  # TODO запрос берет все чеки а надо только те которых нет в receipt
     for items in receipt:
         headers = {
             'device-id': '',
@@ -64,7 +64,10 @@ def receipt_get_handler():
             print('Неизвестный ключ словаря')
 
         try:
+            auth_login = items.user.fns_login
+            auth_password = items.user.fns_password
             full_receipt = requests.get(url_receipt, auth=HTTPBasicAuth(auth_login, auth_password), headers=headers)
+            print(full_receipt)
             full_receipt.raise_for_status()
             data = full_receipt.json()
             if data: # TODO оптимизировать. м.б. вынести в функцию
@@ -80,7 +83,3 @@ def receipt_get_handler():
             print('Сетевая ошибка')
         except ValueError:
             print(full_receipt.status_code, full_receipt.text)
-
-
-def receipt_loader(data: dict):
-    pass

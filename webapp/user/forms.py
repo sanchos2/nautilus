@@ -18,7 +18,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Пароль', validators=[DataRequired()], render_kw={'class': 'form-control'})
     password2 = PasswordField('Повторите пароль', validators=[DataRequired(), EqualTo('password')],
                               render_kw={'class': 'form-control'})
-    fns_login = StringField('Ведите номер телефона в формате +71001232121(будет использован для регистрации в ФНС)',
+    fns_login = StringField('Ведите номер телефона в формате +71001232121(необходим для регистрации в ФНС)',
                             validators=[DataRequired(), Length(min=12, max=12)], render_kw={'class': 'form-control'})
     fns_password = PasswordField('Пароль от KKT-NALOG', render_kw={'class': 'form-control'})
     submit = SubmitField('Зарегистрироваться', render_kw={'class': 'btn btn-primary'})
