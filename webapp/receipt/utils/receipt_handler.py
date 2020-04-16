@@ -83,3 +83,28 @@ def receipt_get_handler():
             print('Сетевая ошибка')
         except ValueError:
             print(full_receipt.status_code, full_receipt.text)
+
+
+def registration_fns(email: str, name: str, phone: str) -> str:
+    """
+    Функция для регистрации пользователя в ФНС
+    Ответы сервера: 204 - Успешно, 409 -User exist, 500 - Некорректный номер, 400 - некорректный email
+    """
+    registration_url = 'https://proverkacheka.nalog.ru:9999/v1/mobile/users/signup'
+    data = {
+        'email': email,
+        'name': name,
+        'phone': phone
+    }
+    try:
+        registration_request = requests.post(registration_url, json=data)
+        status_code = registration_request.status_code
+        text = registration_request.text
+        if status_code != 204:
+            return text
+        else:
+            return 'Регистрация успешна'
+    except requests.RequestException:
+        return 'Сетевая ошибка'
+    except ValueError:
+        return 'Пользователь уже создан или неправильный формат телефона / email'
