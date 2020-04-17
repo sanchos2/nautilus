@@ -12,9 +12,6 @@
     {% endwith %}
     <h2>{{ page_title }}</h2>
 </div>
-<div>
-    <h4 id="qr">Тут выводятся данные из чека</h4>
-</div>
 <table class="table table-striped">
     <tr>
         <thead>
@@ -23,16 +20,60 @@
         <th scope="col">Сумма</th>
         </thead>
     </tr>
-    {% for receipt in receipt_dict.values() %}
+    {% for items in purchase %}
     <tr>
         <tbody>
-        <td><a href="/receipt/my-detailed-receipt">{{ receipt['data'] }}</a></td>
-        <td><a href="{{receipt}}">{{ receipt['name'] }}</a></td>
-        <td><a href="{{receipt}}">{{ receipt['sum'] }}</a></td>
+        <td><a href="{{ url_for('receipt.my_detailed_receipt', purchase=items.id) }}">{{ items.date }}</a></td>
+        <td><a href="{{ url_for('receipt.my_detailed_receipt', purchase=items.id) }}">{{ items.organization }}</a></td>
+        <td><a href="{{ url_for('receipt.my_detailed_receipt', purchase=items.id) }}">{{ items.sum }}</a></td>
         </tbody>
     </tr>
     {% endfor %}
 </table>
-{{ data }}
-<button type="button" class="btn btn-primary" onclick="window.location.href = '/receipt/qrscaner'">Добавить чек</button>
+<!--{{ data }}-->
+<button type="button" class="btn btn-primary" onclick="window.location.href = '/receipt/qrscaner'">Сканировать чек
+</button>
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#manual_add">
+    Добавить вручную
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="manual_add" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url_for('api.process_manual_add_purchase') }}" method="post">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form.date.label }} <br>
+                        {{ form.date() }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.purchase.label }} <br>
+                        {{ form.purchase() }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.quantity.label }} <br>
+                        {{ form.quantity() }}
+                    </div>
+                    <div class="form-group">
+                        {{ form.sum.label }} <br>
+                        {{ form.sum() }}
+                    </div>
+                    <p> {{ form.submit() }} </p>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

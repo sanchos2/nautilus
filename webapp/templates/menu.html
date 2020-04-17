@@ -1,18 +1,24 @@
 <nav class="navbar  navbar-dark bg-primary">
-<!--  <a class="navbar-brand" href="/users/login">Вход</a>-->
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    {% if current_user.is_authenticated %}
-    <div class="navbar-nav">
-      <a class="nav-item nav-link" href="/receipt">Проверка чека</a>
-      <a class="nav-item nav-link" href="/receipt/my-receipt">Мои чеки</a>
-      <a class="nav-item nav-link" href="/receipt/my-outlay">Мои расходы</a>
-      <a class="nav-item nav-link" href="/receipt/qrscaner">QR Scaner</a>
-      <a class="nav-item nav-link" href="/users/profile">Профиль</a>
-      <a class="nav-item nav-link" href="/users/logout">Выход</a>
+    <!--  <a class="navbar-brand" href="/users/login">Вход</a>-->
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            {% if current_user.is_authenticated %}
+            {% if current_user.is_admin %}
+            <a class="nav-item nav-link" href="{{ url_for('admin.admin_index') }}">Панель управления</a>
+            {% endif %}
+            <a class="nav-item nav-link" href="{{ url_for('receipt.receipt') }}">Проверка чека</a>
+            <a class="nav-item nav-link" href="{{ url_for('receipt.my_receipt') }}">Мои чеки</a>
+            <a class="nav-item nav-link" href="{{ url_for('receipt.my_outlay') }}">Мои расходы</a>
+            <a class="nav-item nav-link" href="{{ url_for('receipt.qrscaner') }}">QR Scaner</a>
+            <a class="nav-item nav-link" href="{{ url_for('user.profile', username=current_user.username) }}">Профиль</a>
+            <a class="nav-item nav-link" href="{{ url_for('user.logout') }}">Выход</a>
+            {% else %}
+            <a class="nav-item nav-link" href="{{ url_for('user.login') }}">Вход</a>
+        </div>
+        {% endif %}
     </div>
-    {% endif %}
-  </div>
 </nav>

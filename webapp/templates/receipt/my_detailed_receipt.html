@@ -3,9 +3,6 @@
 <div class="container">
     <h2>{{ page_title }}</h2>
 </div>
-<div>
-    <h4 id="qr">Тут вывводятся ДЕТАЛЬНЫЕ данные из чека</h4>
-</div>
 <table class="table table-striped">
     <tr>
         <thead>
@@ -14,16 +11,18 @@
         <th scope="col">Количество</th>
         <th scope="col">Сумма</th>
         <th scope="col">Категория</th>
+        <th scope="col">Субкатегория</th>
         </thead>
     </tr>
-    {% for receipt in receipt_dict_detailed.values() %}
+    {% for items in receipt %}
     <tr>
         <tbody>
-        <td>{{ receipt['name'] }}</td>
-        <td>{{ receipt['price'] }}</td>
-        <td>{{ receipt['qnt'] }}</td>
-        <td>{{ receipt['sum'] }}</td>
-        <td>{{ receipt['cat'] }}</td>
+        <td>{{ items.product }}</td>
+        <td>{{ '%0.2f'| format(items.price/100) }}</td>
+        <td>{{ items.quantity }}</td>
+        <td>{{ '%0.2f'| format(items.sum/100) }}</td>
+        <td>{{ items.category }}</td>
+        <td>{{ items.subcategory }}</td>
         </tbody>
     </tr>
     {% endfor %}

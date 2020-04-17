@@ -74,6 +74,19 @@ def recovery_pass(phone: str) -> str:
         return 'Незарегистрированная учетная запись'
 
 
+# функцию вынес для записи в базу данных корректного формата дата\время
+def format_date(raw_datetime: str) -> str:
+    if len(raw_datetime) == 13:  # если в формате не учтены секунды добавляем 00 секунд
+        raw_datetime = raw_datetime + '00'
+    try:
+        date = datetime.strptime(raw_datetime, '%Y%m%dT%H%M%S')
+        return date
+        #return date.strftime('%Y-%m-%d %H:%M') #убрал Т между датой и временем. закоментировал чтобы писалось в базу в формате date
+    except ValueError:
+        print('Не возможно распарсить строку date time')
+        return False
+
+
 def check_receipt(receipt_data: Dict) -> bool:  # TODO таймаут, счетчик
     """
     Функция проверки валидности чека
@@ -81,21 +94,21 @@ def check_receipt(receipt_data: Dict) -> bool:  # TODO таймаут, счет�
     500 - irkkt db timeout
     """
 
-    date_string = receipt_data['t']
-    if len(date_string) == 13:  # если в формате не учтены секунды добавляем 00 секунд
-        date_string = date_string + '00'
-    try:
-        date = datetime.strptime(date_string, '%Y%m%dT%H%M%S')
-        format_date = date.strftime('%Y-%m-%dT%H:%M')
-    except ValueError:
-        print('Не возможно распарсить строку date time')
-        return False
+    # date_string = receipt_data['t']
+    # if len(date_string) == 13:  # если в формате не учтены секунды добавляем 00 секунд
+    #     date_string = date_string + '00'
+    # try:
+    #     date = datetime.strptime(date_string, '%Y%m%dT%H%M%S')
+    #     format_date = date.strftime('%Y-%m-%dT%H:%M')
+    # except ValueError:
+    #     print('Не возможно распарсить строку date time')
+    #     return False
 
     try:
         sum = int(float(receipt_data['s']) * 100)
         path = '/v1/ofds/*/inns/*/fss/' + receipt_data['fn'] + '/operations/' + receipt_data['n'] + '/tickets/' + \
                receipt_data['i']
-        query = 'fiscalSign=' + receipt_data['fp'] + '&date=' + format_date + '&sum=' + str(sum)
+        query = 'fiscalSign=' + receipt_data['fp'] + '&date=' + format_date(receipt_data['t']).strftime('%Y-%m-%dT%H:%M') + '&sum=' + str(sum)
         par = ('https', 'proverkacheka.nalog.ru:9999', path, '', query, '')
         url_check_receipt = urllib.urlunparse(par)
         print(url_check_receipt)
@@ -122,12 +135,13 @@ def check_receipt(receipt_data: Dict) -> bool:  # TODO таймаут, счет�
 def get_receipt(receipt_data: Dict, login: str, password: int) -> Dict:
     """
     Функция получения полных данных по кассовому чеку
-    ВАЖНО! первый запрос по чеку приходит пустой необходимо сделать повторный запрос
+    ВАЖНО! первый запрос по чеку приходит пустой необходимо сделать повторный запрос. ПАТАМУШТО 202, не было запроса на валидность
     """
     headers = {
         'device-id': '',
         'device-os': '',
     }
+    # headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:74.0) Gecko/20100101 Firefox/74.0'}
     try:
         url_receipt = 'https://proverkacheka.nalog.ru:9999/v1/inns/*/kkts/*/fss/' + receipt_data['fn'] + \
                       '/tickets/' + receipt_data['i'] + '?fiscalSign=' + receipt_data['fp'] + \

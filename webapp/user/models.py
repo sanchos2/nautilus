@@ -1,9 +1,7 @@
 from flask_login import UserMixin
-from flask_sqlalchemy import SQLAlchemy
-
 from werkzeug.security import generate_password_hash, check_password_hash
 
-db = SQLAlchemy()
+from webapp.db import db
 
 
 class User(db.Model, UserMixin):
@@ -11,6 +9,9 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(64), index=True, unique=True)
     password = db.Column(db.String(128))
     role = db.Column(db.String(10), index=True)
+    email = db.Column(db.String(50))
+    fns_login = db.Column(db.String(12))
+    fns_password = db.Column(db.String(128))
 
     def __repr__(self):
         return '<User {}'.format(self.username)
