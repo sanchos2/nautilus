@@ -2,7 +2,6 @@ from flask import Blueprint, jsonify, request, redirect, flash, render_template,
 from flask_login import current_user, login_required
 
 from webapp.db import db
-from webapp.receipt.my_data import auth_login, auth_password
 from webapp.receipt.find_receipt import qr_parser, check_receipt, get_receipt, format_date
 from webapp.receipt.forms import ReceiptForm, PurchaseForm
 from webapp.receipt.models import Receipt, Purchase
@@ -15,6 +14,8 @@ blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 @login_required
 def process_qrparser():
     form = ReceiptForm()
+    auth_login = current_user.fns_login
+    auth_password = current_user.fns_password
     if form.validate_on_submit():
         qr_text = form.qrtext.data
         data_from_qr = qr_parser(qr_text)

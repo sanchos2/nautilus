@@ -8,6 +8,7 @@ from flask_migrate import Migrate
 from webapp.db import db
 from webapp.user.models import User
 from webapp.receipt.models import Receipt, Purchase
+from webapp.landing.views import blueprint as landing_blueprint
 from webapp.admin.views import blueprint as admin_blueprint
 from webapp.api.views import blueprint as api_blueprint
 from webapp.receipt.views import blueprint as receipt_blueprint
@@ -30,6 +31,7 @@ def create_app():
     login_manager.init_app(app)
     login_manager.login_view = 'user.login'
     app.register_blueprint(api_blueprint)
+    app.register_blueprint(landing_blueprint)
     app.register_blueprint(receipt_blueprint)
     app.register_blueprint(user_blueprint)
     app.register_blueprint(admin_blueprint)
@@ -38,14 +40,3 @@ def create_app():
     def load_user(user_id):
         return User.query.get(user_id)
     return app
-
-
-app = create_app()
-
-
-@app.route('/')
-def index():
-    if current_user.is_authenticated:
-        return redirect(url_for('receipt.my_receipt'))
-    title = 'Nautilus'
-    return render_template('index.html', page_title=title, name='Сервис контроля за личными расходами')
