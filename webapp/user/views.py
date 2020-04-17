@@ -52,7 +52,7 @@ def profile(username):
     register_fns_form = RegisterFnsForm()
     recovery_fns_form = RecoveryFnsForm()
     return render_template('user/profile.html', page_title=title, form=profile_form,
-                           form_fns=register_fns_form, form_recovery=register_fns_form, user=user)
+                           form_fns=register_fns_form, form_recovery=recovery_fns_form, user=user)
 
 
 @blueprint.route('/process-profile', methods=['POST'])

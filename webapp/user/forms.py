@@ -55,6 +55,6 @@ class RegisterFnsForm(FlaskForm):
 
 
 class RecoveryFnsForm(FlaskForm):
-    telephone = StringField('Ведите номер телефона в формате +7ХХХХХХХХХХ',
+    telephone = StringField('Ведите номер телефона в формате +7ХХХХХХХХХХ, который был указан при регистрации',
                             validators=[DataRequired(), Length(min=12, max=12)], render_kw={'class': 'form-control'})
     submit = SubmitField('Запросить пароль', validators=[DataRequired()], render_kw={'class': 'btn btn-primary'})

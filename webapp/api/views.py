@@ -4,7 +4,7 @@ from flask_login import current_user, login_required
 from webapp.db import db
 from webapp.receipt.my_data import auth_login, auth_password
 from webapp.receipt.find_receipt import qr_parser, check_receipt, get_receipt, format_date
-from webapp.receipt.forms import ReceiptForm
+from webapp.receipt.forms import ReceiptForm, PurchaseForm
 from webapp.receipt.models import Receipt, Purchase
 
 blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -45,7 +45,7 @@ def qrscaner_process():
     # fn_number - fn, fd_number - i, fpd_number - fp
     try:
         if Purchase.query.filter_by(fd_number=data_from_qr['i']).first(): # TODO сделать проверку по трем параметрам чека
-            raise ValueError('fn_number in Table!!!')
+            raise ValueError('fd_number in Table!!!')
         else:
             new_purchase = Purchase(user_id=current_user.id, fn_number=data_from_qr['fn'],
                                     fd_number=data_from_qr['i'], fpd_number=data_from_qr['fp'],
@@ -54,6 +54,37 @@ def qrscaner_process():
             db.session.add(new_purchase)
             db.session.commit()
     except ValueError:
-        print('fn_number уже есть в таблице! Чек не добавляем.')
+        print('fd_number уже есть в таблице! Чек не добавляем.')
         flash('Этот чек Вы уже добавляли!')
     return make_response(jsonify(data_from_qr), 200)
+
+
+@blueprint.route('/process-manual-add-purchase', methods=['POST'])
+@login_required
+def process_manual_add_purchase():
+    form = PurchaseForm()
+    if form.validate_on_submit():
+        sum = form.sum.data.replace(',', '.')
+        quantity = form.quantity.data.replace(',', '.')
+        new_purchase = Purchase(user_id=current_user.id,
+                                receipt_type=1,
+                                valid=1,
+                                sum=sum,
+                                date=form.date.data,
+                                organization='Вручную')
+        db.session.add(new_purchase)
+        db.session.commit()
+        new_receipt = Receipt(purchase_id=new_purchase.id,
+                              product=form.purchase.data,
+                              price=float(sum) * 100 / float(quantity),
+                              quantity=quantity,
+                              sum=float(sum) * 100)
+        db.session.add(new_receipt)
+        db.session.commit()
+        flash('Покупка успешно добавлена')
+        return redirect(url_for('receipt.my_receipt'))
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f'Ошибка в поле "{getattr(form, field).label.text}": - {error}')
+        return redirect(url_for('receipt.my_receipt'))

@@ -69,14 +69,24 @@ def receipt_get_handler():
             auth_login = items.user.fns_login
             auth_password = items.user.fns_password
             full_receipt = requests.get(url_receipt, auth=HTTPBasicAuth(auth_login, auth_password), headers=headers)
-            print(full_receipt)
             full_receipt.raise_for_status()
             data = full_receipt.json()
             if data: # TODO оптимизировать. м.б. вынести в функцию
                 if not Receipt.query.filter(Receipt.purchase_id == items.id).count() > 0: # Так правильно?
+                    try:
+                        organization = data['document']['receipt']['user']
+                        items.organization = organization
+                    except KeyError:
+                        print('Отсутствует название продавца')
+                    db.session.add(items)
+                    db.session.commit()
                     for pozition in data['document']['receipt']['items']:
-                        new_receipt = Receipt(purchase_id=items.id, product=pozition['name'], price=pozition['price'],
-                                              quantity=pozition['quantity'], sum=pozition['sum'])
+                        new_receipt = Receipt(purchase_id=items.id,
+                                              product=pozition['name'],
+                                              price=pozition['price'],
+                                              quantity=pozition['quantity'],
+                                              sum=pozition['sum'],
+                                              )
                         db.session.add(new_receipt)
                         db.session.commit()
                 else:

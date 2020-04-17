@@ -14,6 +14,7 @@ class Purchase(db.Model):
     date = db.Column(db.DateTime)
     sum = db.Column(db.Integer)
     valid = db.Column(db.String)
+    organization = db.Column(db.String)
 
     user = relationship('User', backref='purchases')
 
@@ -26,10 +27,11 @@ class Receipt(db.Model):
     purchase_id = db.Column(db.Integer, db.ForeignKey('purchase.id', ondelete='CASCADE'), index=True)
     product = db.Column(db.String)
     price = db.Column(db.Integer)
-    quantity = db.Column(db.Float)
+    quantity = db.Column(db.Float) # TODO м.б. Integer?
     sum = db.Column(db.Integer)
     category = db.Column(db.String)
     subcategory = db.Column(db.String)
+
 
     purchase = relationship('Purchase', backref='receipts')
 
