@@ -136,3 +136,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 /query.py
+/tasks-old.py
