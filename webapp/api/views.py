@@ -69,10 +69,11 @@ def process_manual_add_purchase():
         quantity = form.quantity.data.replace(',', '.')
         new_purchase = Purchase(user_id=current_user.id,
                                 receipt_type=1,
-                                valid=1,
                                 sum=sum,
                                 date=form.date.data,
-                                organization='Вручную')
+                                organization='Вручную',
+                                loaded='fetched',
+                                )
         db.session.add(new_purchase)
         db.session.commit()
         new_receipt = Receipt(purchase_id=new_purchase.id,

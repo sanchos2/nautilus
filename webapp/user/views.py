@@ -40,7 +40,7 @@ def process_login():
 def logout():
     logout_user()
     flash('Вы успешно разлогинились')
-    return redirect(url_for('index'))
+    return redirect(url_for('landing.index'))
 
 
 @blueprint.route('/profile/<username>')
