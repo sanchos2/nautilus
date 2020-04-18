@@ -15,7 +15,7 @@ def convert_date_to_fns_format(date_db):
 
 
 def receipt_get_handler():
-    receipt = Purchase.query.filter(Purchase.loaded.is_(None)).all()
+    receipt = Purchase.query.filter(Purchase.loaded.isnot('fetched')).all()
     for items in receipt:
         headers = {
             'device-id': '',
@@ -36,7 +36,7 @@ def receipt_get_handler():
             full_receipt.raise_for_status()
             data = full_receipt.json()
             if data:
-                if not Receipt.query.filter(Receipt.purchase_id == items.id).count() > 0: # Так правильно?
+                if not Receipt.query.filter(Receipt.purchase_id == items.id).count() > 0:
                     try:
                         organization = data['document']['receipt']['user']
                         items.organization = organization
@@ -44,6 +44,7 @@ def receipt_get_handler():
                     except KeyError:
                         print('Отсутствует название продавца')
                         items.organization = 'Продавец не указан'
+                        items.loaded = 'fetched'
                     db.session.add(items)
                     db.session.commit()
                     for pozition in data['document']['receipt']['items']:
@@ -58,7 +59,7 @@ def receipt_get_handler():
                 else:
                     print('Полные данные по чеку уже внесены')
         except requests.RequestException:
-            print('Сетевая ошибка')
+            print('Сетевая ошибка',full_receipt.status_code, full_receipt.text)
         except ValueError:
             print(full_receipt.status_code, full_receipt.text)
 
