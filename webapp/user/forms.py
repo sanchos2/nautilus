@@ -33,7 +33,7 @@ class RegistrationForm(FlaskForm):
 
 class ProfileForm(FlaskForm):
     fns_login = StringField('Ведите номер телефона в формате +7ХХХХХХХХХХ',
-                            validators=[Length(min=12, max=12)], render_kw={'class': 'form-control'})
+                            render_kw={'class': 'form-control'})
     fns_password = PasswordField('Пароль полученный в sms сообщении от KKT-NALOG', render_kw={'class': 'form-control'})
     submit = SubmitField('Обновить профиль', validators=[DataRequired()], render_kw={'class': 'btn btn-primary'})
 
