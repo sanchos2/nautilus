@@ -20,6 +20,7 @@ flask-migrate = "^2.5.3"
 pytest = "^5.4.1"
 gunicorn = "^20.0.4"
 psycopg2-binary = "^2.8.5"
+celery = {extras = ["redis"], version = "^4.4.2"}
 
 [tool.poetry.dev-dependencies]
 
