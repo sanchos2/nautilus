@@ -3,7 +3,7 @@ from celery.schedules import crontab
 from webapp import create_app
 from webapp.receipt.utils.receipt_handler import receipt_get_handler
 
-celery_app = Celery('tasks', broker='redis://localhost:6379/0')
+celery_app = Celery('receipts', broker='redis://localhost:6379/0')
 
 flask_app = create_app()
 
