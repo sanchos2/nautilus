@@ -18,7 +18,7 @@ class Purchase(db.Model):
     user = relationship('User', backref='purchases')
 
     def __repr__(self):
-        return f'<Покупка - {self.id}, за дату - {self.date}, на сумму - {self.sum}, валидность - {self.valid}'
+        return f'<Покупка - {self.id}, за дату - {self.date}, на сумму - {self.sum}, валидность - {self.loaded}'
 
 
 class Receipt(db.Model):

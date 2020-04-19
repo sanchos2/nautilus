@@ -37,10 +37,10 @@ class ProfileForm(FlaskForm):
     fns_password = PasswordField('Пароль полученный в sms сообщении от KKT-NALOG', render_kw={'class': 'form-control'})
     submit = SubmitField('Обновить профиль', validators=[DataRequired()], render_kw={'class': 'btn btn-primary'})
 
-    def validate_fns_login(self, fns_login):
-        fns_login_count = User.query.filter_by(fns_login=fns_login.data).count()
-        if fns_login_count > 0:
-            raise ValidationError('Пользователь с таким номером телефона уже зарегистрирован')
+    # def validate_fns_login(self, fns_login):
+    #     fns_login_count = User.query.filter_by(fns_login=fns_login.data).count()
+    #     if fns_login_count > 0:
+    #         raise ValidationError('Пользователь с таким номером телефона уже зарегистрирован')
 
 
 class RegisterFnsForm(FlaskForm):
