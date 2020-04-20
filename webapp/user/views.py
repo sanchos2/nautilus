@@ -62,8 +62,10 @@ def process_profile():
     if form.validate_on_submit():
         username = current_user.username
         user = User.query.filter_by(username=username).first_or_404()
-        user.fns_login = form.fns_login.data
-        user.fns_password = form.fns_password.data
+        if form.fns_login.data:
+            user.fns_login = form.fns_login.data
+        if form.fns_password.data:
+            user.fns_password = form.fns_password.data
         db.session.add(user)
         db.session.commit()
         flash('Вы успешно обновили свой профиль')
