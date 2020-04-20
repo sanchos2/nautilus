@@ -51,7 +51,7 @@ def profile(username):
     profile_form = ProfileForm()
     register_fns_form = RegisterFnsForm()
     recovery_fns_form = RecoveryFnsForm()
-    return render_template('user/profile.html', page_title=title, form=profile_form,
+    return render_template('user/admin_index.html', page_title=title, form=profile_form,
                            form_fns=register_fns_form, form_recovery=recovery_fns_form, user=user)
 
 

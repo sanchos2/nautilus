@@ -13,6 +13,7 @@ from webapp.admin.views import blueprint as admin_blueprint
 from webapp.api.views import blueprint as api_blueprint
 from webapp.receipt.views import blueprint as receipt_blueprint
 from webapp.user.views import blueprint as user_blueprint
+from webapp.statistic.views import blueprint as statistic_blueprint
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 file_yaml = os.path.join(basedir, '..', 'config.yaml')
@@ -35,6 +36,7 @@ def create_app():
     app.register_blueprint(receipt_blueprint)
     app.register_blueprint(user_blueprint)
     app.register_blueprint(admin_blueprint)
+    app.register_blueprint(statistic_blueprint)
 
     @login_manager.user_loader
     def load_user(user_id):

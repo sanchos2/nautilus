@@ -10,10 +10,8 @@
             {% if current_user.is_admin %}
             <a class="nav-item nav-link" href="{{ url_for('admin.admin_index') }}">Панель управления</a>
             {% endif %}
-            <a class="nav-item nav-link" href="{{ url_for('receipt.receipt') }}">Проверка чека</a>
             <a class="nav-item nav-link" href="{{ url_for('receipt.my_receipt') }}">Мои чеки</a>
-            <a class="nav-item nav-link" href="{{ url_for('receipt.my_outlay') }}">Мои расходы</a>
-            <a class="nav-item nav-link" href="{{ url_for('receipt.qrscaner') }}">QR Scaner</a>
+            <a class="nav-item nav-link" href="{{ url_for('statistic.my_outlay') }}">Мои расходы</a>
             <a class="nav-item nav-link" href="{{ url_for('user.profile', username=current_user.username) }}">Профиль</a>
             <a class="nav-item nav-link" href="{{ url_for('user.logout') }}">Выход</a>
             {% else %}

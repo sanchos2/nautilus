@@ -28,10 +28,21 @@ class Receipt(db.Model):
     price = db.Column(db.Integer)
     quantity = db.Column(db.Float)
     sum = db.Column(db.Integer)
-    category = db.Column(db.String)
-    subcategory = db.Column(db.String)
+    category = db.Column(db.Integer, db.ForeignKey('category.id'), index=True)
+    subcategory = db.Column(db.Integer, db.ForeignKey('subcategory.id'), index=True)
 
     purchase = relationship('Purchase', backref='receipts')
 
     def __repr__(self):
         return f'<Позиция по чеку - {self.product}, сумма позиции - {self.sum}'
+
+
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category = db.Column(db.String)
+
+
+class Subcategory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id', ondelete='CASCADE'), index=True)
+    subcategory = db.Column(db.String)
