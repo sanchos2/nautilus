@@ -1,4 +1,5 @@
 from sqlalchemy.orm import relationship
+from sqlalchemy_utils import LtreeType
 from webapp.db import db
 
 
@@ -32,6 +33,7 @@ class Receipt(db.Model):
     subcategory = db.Column(db.Integer, db.ForeignKey('subcategory.id'), index=True)
 
     purchase = relationship('Purchase', backref='receipts')
+    category_name = relationship('Category', backref='receipts')
 
     def __repr__(self):
         return f'<Позиция по чеку - {self.product}, сумма позиции - {self.sum}'

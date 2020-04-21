@@ -25,7 +25,7 @@ with open(file_yaml, 'r') as yml_file:
 
 def create_app():
     app = Flask(__name__)
-    app.config.from_mapping(data['DEVELOPMENT'])
+    app.config.from_mapping(data['PRODUCTION'])
     db.init_app(app)
     migrate = Migrate(app, db)
     login_manager = LoginManager()

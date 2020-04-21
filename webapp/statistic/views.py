@@ -9,5 +9,4 @@ blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 @login_required
 def my_outlay():
     title = 'Мои расходы'
-
     return render_template('statistic/my_outlay.html', page_title=title)

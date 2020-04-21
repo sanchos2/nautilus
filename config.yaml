@@ -3,3 +3,8 @@ DEVELOPMENT:
   SQLALCHEMY_DATABASE_URI: 'sqlite:///webapp.db'
   SECRET_KEY: 'super_secret_key'
   SQLALCHEMY_TRACK_MODIFICATIONS: False
+PRODUCTION:
+  ENV: 'production'
+  SQLALCHEMY_DATABASE_URI: 'postgresql://nautilus:nautilus@localhost:5432/nautilus'
+  SECRET_KEY: 'any_secret_key'
+  SQLALCHEMY_TRACK_MODIFICATIONS: False
