@@ -5,6 +5,7 @@ from flask_login import config, current_user
 
 
 def admin_required(func):
+    """Admin required decorator"""
     @wraps(func)
     def decorated_view(*args, **kwargs):
         if request.method in config.EXEMPT_METHODS:

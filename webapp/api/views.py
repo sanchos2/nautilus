@@ -1,10 +1,11 @@
-from flask import Blueprint, jsonify, request, redirect, flash, render_template, url_for, make_response
+from flask import Blueprint, flash, jsonify, make_response, request, redirect, url_for
 from flask_login import current_user, login_required
 
 from webapp.db import db
-from webapp.receipt.find_receipt import qr_parser, check_receipt, get_receipt, format_date
+from webapp.receipt.models import Purchase, Receipt
 from webapp.receipt.forms import PurchaseForm
-from webapp.receipt.models import Receipt, Purchase
+from webapp.receipt.utils.receipt_handler import format_date, qr_parser
+
 
 blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -12,11 +13,13 @@ blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 @blueprint.route('/qrscaner-process', methods=['POST'])
 @login_required
 def qrscaner_process():
+    """Add data from QR code to database"""
     qr_text = request.data.decode('utf-8')
     data_from_qr = qr_parser(qr_text)
     # fn_number - fn, fd_number - i, fpd_number - fp
     try:
-        if Purchase.query.filter_by(fd_number=data_from_qr['i']).first(): # TODO сделать проверку по трем параметрам чека
+        if Purchase.query.filter_by(fd_number=data_from_qr['i']).first(): # TODO сделать проверку по трем параметрам
+            # чека
             raise ValueError('fd_number in Table!!!')
         else:
             new_purchase = Purchase(user_id=current_user.id, fn_number=data_from_qr['fn'],
@@ -34,6 +37,7 @@ def qrscaner_process():
 @blueprint.route('/process-manual-add-purchase', methods=['POST'])
 @login_required
 def process_manual_add_purchase():
+    """Manually add purchase to database"""
     form = PurchaseForm()
     if form.validate_on_submit():
         sum = form.sum.data.replace(',', '.')

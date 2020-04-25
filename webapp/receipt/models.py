@@ -1,9 +1,11 @@
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import LtreeType
+
 from webapp.db import db
 
 
 class Purchase(db.Model):
+    """Purchase model"""
     # fn_number - fn, fd_number - i, fpd_number - fp
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), index=True)
@@ -15,14 +17,19 @@ class Purchase(db.Model):
     sum = db.Column(db.Float)
     loaded = db.Column(db.String)
     organization = db.Column(db.String)
+    tree = db.Column(db.Integer, db.ForeignKey('category_tree.id'), index=True)
 
     user = relationship('User', backref='purchases')
+
+    def __str__(self):
+        return self.organization
 
     def __repr__(self):
         return f'<Покупка - {self.id}, за дату - {self.date}, на сумму - {self.sum}, валидность - {self.loaded}'
 
 
 class Receipt(db.Model):
+    """Receipt model"""
     id = db.Column(db.Integer, primary_key=True)
     purchase_id = db.Column(db.Integer, db.ForeignKey('purchase.id', ondelete='CASCADE'), index=True)
     product = db.Column(db.String)
@@ -35,16 +42,47 @@ class Receipt(db.Model):
     purchase = relationship('Purchase', backref='receipts')
     category_name = relationship('Category', backref='receipts')
 
+    def __str__(self):
+        return self.product
+
     def __repr__(self):
         return f'<Позиция по чеку - {self.product}, сумма позиции - {self.sum}'
 
 
 class Category(db.Model):
+    """Category model"""
     id = db.Column(db.Integer, primary_key=True)
     category = db.Column(db.String)
 
+    def __str__(self):
+        return self.category
+
+    def __repr__(self):
+        return f'<CategoryTree({self.category})'
+
 
 class Subcategory(db.Model):
+    """Subcategory model"""
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id', ondelete='CASCADE'), index=True)
     subcategory = db.Column(db.String)
+
+    def __str__(self):
+        return self.subcategory
+
+    def __repr__(self):
+        return f'<CategoryTree({self.subcategory})'
+
+
+class CategoryTree(db.Model):
+    """Category model"""
+    # перед добавлением таблицы в базе установить расширение: create extension if not exists ltree;
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    path = db.Column(LtreeType, nullable=False)
+
+    def __str__(self):
+        return self.name
+
+    def __repr__(self):
+        return f'<CategoryTree({self.name})'

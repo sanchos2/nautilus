@@ -1,16 +1,17 @@
-from flask import Blueprint, render_template, redirect, flash, url_for, request
-from flask_login import current_user, logout_user, login_user, login_required
+from flask import Blueprint, flash, render_template, redirect,  url_for
+from flask_login import current_user, login_required, login_user, logout_user
 
 from webapp import db
-from webapp.receipt.utils.receipt_handler import registration_fns, recovery_pass
-from webapp.user.forms import LoginForm, RegistrationForm, ProfileForm, RegisterFnsForm, RecoveryFnsForm
+from webapp.receipt.utils.receipt_handler import recovery_pass, registration_fns
+from webapp.user.forms import LoginForm, ProfileForm, RecoveryFnsForm, RegistrationForm,  RegisterFnsForm
 from webapp.user.models import User
 
 blueprint = Blueprint('user', __name__, url_prefix='/users')
 
 
-@blueprint.route('/login')
+@blueprint.route('/login', endpoint='login')
 def login():
+    """Login required"""
     if current_user.is_authenticated:
         return redirect(url_for('receipt.my_receipt'))
     title = 'Авторизация'
@@ -20,6 +21,7 @@ def login():
 
 @blueprint.route('/process-login', methods=['POST'])
 def process_login():
+    """Authorization process"""
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -38,6 +40,7 @@ def process_login():
 @blueprint.route('/logout')
 @login_required
 def logout():
+    """Logout process"""
     logout_user()
     flash('Вы успешно разлогинились')
     return redirect(url_for('landing.index'))
@@ -46,6 +49,7 @@ def logout():
 @blueprint.route('/profile/<username>')
 @login_required
 def profile(username):
+    """Render user profile page"""
     title = 'Страница профиля пользователя'
     user = User.query.filter_by(username=username).first_or_404()
     profile_form = ProfileForm()
@@ -58,6 +62,7 @@ def profile(username):
 @blueprint.route('/process-profile', methods=['POST'])
 @login_required
 def process_profile():
+    """Update user profile process"""
     form = ProfileForm()
     if form.validate_on_submit():
         username = current_user.username
@@ -79,6 +84,7 @@ def process_profile():
 
 @blueprint.route('/recovery')
 def recovery():
+    """Recovery password page"""
     title = 'Страница восстановления пароля'
     dev_message = 'Сделать форму восстановления пароля'
     return render_template('user/recovery.html', page_title=title, dev_message=dev_message)
@@ -86,6 +92,7 @@ def recovery():
 
 @blueprint.route('/register')
 def register():
+    """User registration page"""
     if current_user.is_authenticated:
         return redirect(url_for('receipt.my_receipt'))
     title = 'Регистрация нового пользователя'
@@ -95,6 +102,7 @@ def register():
 
 @blueprint.route('/process-register', methods=['POST'])
 def process_register():
+    """User registration process"""
     form = RegistrationForm()
     if form.validate_on_submit():
         new_user = User(username=form.username.data, email=form.email.data, role='user')
@@ -112,7 +120,8 @@ def process_register():
 
 @blueprint.route('/process-register-fns', methods=['POST'])
 @login_required
-def process_register_fns(): # TODO продумать возвращение ретурнов через flash
+def process_register_fns():
+    """Registration in FNS process"""
     form = RegisterFnsForm()
     if form.validate_on_submit():
         email = current_user.email
@@ -130,7 +139,8 @@ def process_register_fns(): # TODO продумать возвращение р�
 
 @blueprint.route('/process-recovery-fns', methods=['POST'])
 @login_required
-def process_recovery_fns(): # TODO продумать возвращение ретурнов через flash
+def process_recovery_fns():
+    """Recovery password from FNS"""
     form = RecoveryFnsForm()
     if form.validate_on_submit():
         phone = form.telephone.data

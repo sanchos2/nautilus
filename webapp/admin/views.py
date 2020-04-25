@@ -11,6 +11,7 @@ blueprint = Blueprint('admin', __name__, url_prefix='/admin')
 @blueprint.route('/')
 @admin_required
 def admin_index():
+    """ An admin page with category and subcategory adding functions"""
     category_list = Category.query.all()
     category_form = CategoryForm()
     subcategory_list = Subcategory.query.all()
@@ -25,6 +26,7 @@ def admin_index():
 @blueprint.route('/category-add', methods=['POST'])
 @admin_required
 def category_add():
+    """Category add function"""
     form = CategoryForm()
     if form.validate_on_submit():
         new_category = Category(category=form.category.data)
@@ -33,13 +35,14 @@ def category_add():
         flash('Категория добавлена')
         return redirect(url_for('admin.admin_index'))
     else:
-        flash('Категория НЕ добавлена')
+        flash('Категория не добавлена')
         return redirect(url_for('admin.admin_index'))
 
 
 @blueprint.route('/subcategory-add', methods=['POST'])
 @admin_required
 def subcategory_add():
+    """Subcategory add function"""
     subcategory_form = SubcategoryForm()
     if subcategory_form.validate_on_submit():
         new_subcategory = Subcategory(category_id=subcategory_form.category.data,
@@ -49,6 +52,5 @@ def subcategory_add():
         flash('Субкатегория добавлена')
         return redirect(url_for('admin.admin_index'))
     else:
-        flash('Субкатегория НЕ добавлена')
+        flash('Субкатегория не добавлена')
         return redirect(url_for('admin.admin_index'))
-

@@ -1,19 +1,21 @@
-import yaml
 import os
+import yaml
 
-from flask import Flask, render_template, redirect, url_for
-from flask_login import LoginManager, current_user
+from flask import Flask
+from flask_login import LoginManager
 from flask_migrate import Migrate
 
 from webapp.db import db
-from webapp.user.models import User
 from webapp.receipt.models import Receipt, Purchase
-from webapp.landing.views import blueprint as landing_blueprint
+from webapp.user.models import User
+
 from webapp.admin.views import blueprint as admin_blueprint
 from webapp.api.views import blueprint as api_blueprint
+from webapp.landing.views import blueprint as landing_blueprint
 from webapp.receipt.views import blueprint as receipt_blueprint
-from webapp.user.views import blueprint as user_blueprint
 from webapp.statistic.views import blueprint as statistic_blueprint
+from webapp.user.views import blueprint as user_blueprint
+
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 file_yaml = os.path.join(basedir, '..', 'config.yaml')
@@ -24,6 +26,7 @@ with open(file_yaml, 'r') as yml_file:
 
 
 def create_app():
+    """Create Flask APP"""
     app = Flask(__name__)
     app.config.from_mapping(data['PRODUCTION'])
     db.init_app(app)

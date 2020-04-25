@@ -1,26 +1,39 @@
+from datetime import datetime
 import requests
 from requests.auth import HTTPBasicAuth
+from typing import Dict
 import urllib.parse as urllib
 
 from webapp.db import db
-from webapp.receipt.models import Receipt, Purchase
-
-"""протестировать функцию т.к. возможны проблемы с сервером налоговой!!!"""
+from webapp.receipt.models import Purchase, Receipt
 
 
-def convert_date_to_fns_format(date_db):
+def convert_date_to_fns_format(date_db: datetime) -> str:
+    """Convert datetime from database to FNS format"""
     date = date_db.strftime('%Y-%m-%dT%H:%M')
     return date
 
 
+def format_date(raw_datetime: str) -> datetime:
+    """Convert datetime from QR code without 'T' """
+    if len(raw_datetime) == 13:  # если в формате не учтены секунды добавляем 00 секунд
+        raw_datetime = raw_datetime + '00'
+    try:
+        date = datetime.strptime(raw_datetime, '%Y%m%dT%H%M%S')
+        return date
+    except ValueError:
+        print('Не возможно распарсить строку datetime')
+        return datetime.now()
+
+
 def purchase_valid_handler(fn_number, receipt_type, fd_number, fpd_number, date, sum):
     """
-    Статус коды:
-    204 - чек найден valid
-    406 - чек не найден not_valid
-    400 - не указана дата и сумма
-
-    :return:
+    Validation receipt function
+    Status code:
+    204 - Receipt found and valid
+    406 - Receipt not found or not valid
+    400 - Incorrect date or amount
+    :return: status_code, check_receipt.text
     """
 
     sum = int(float(sum) * 100)
@@ -49,14 +62,14 @@ def purchase_valid_handler(fn_number, receipt_type, fd_number, fpd_number, date,
 
 def receipt_get_handler(purchase):
     """
-    Статус коды
-    200 - вернет json
-    202 - не происхдила проверка чека  на валидность
+    Receive detailed receipt function
+    Status code
+    200 - return json
+    202 - receipt did not pass validation
     204 -
-    403 - некоректные данные пользователя
-    406 - чек не найден
-    451 - нелегальное использование публичного api. Возможно по тому что не происходит проверка на валидность перед
-    запрсом данных
+    403 - wrong username or password
+    406 - receipt not found
+    451 - illegal public api usage
     :return:
     """
     headers = {
@@ -84,6 +97,7 @@ def receipt_get_handler(purchase):
 
 
 def add_receipt_db():
+    """Add detailed information from receipt to database"""
     purchase_list = Purchase.query.filter(Purchase.loaded.is_(None)).all()
     for purchase in purchase_list:
         # проверим чек на валидность. с рез-том ничего не делаем . запрос должен устранить ошибку 451
@@ -95,9 +109,6 @@ def add_receipt_db():
         else:
             # запрашиваем детальную информацию по чеку
             get_purchase = receipt_get_handler(purchase)
-            # if get_purchase[0] == 202:
-            #     # необходимо еще раз запросить данные по чеку
-            #     #get_purchase = receipt_get_handler(purchase)
             if get_purchase[0] != 200:
                 print('<Ответ функции получения детализации по чеку: ', get_purchase)
             else:
@@ -128,8 +139,12 @@ def add_receipt_db():
 
 def registration_fns(email: str, name: str, phone: str) -> str:
     """
-    Функция для регистрации пользователя в ФНС
-    Ответы сервера: 204 - Успешно, 409 -User exist, 500 - Некорректный номер, 400 - некорректный email
+    Register user in FNS service
+    Status code
+    204 - successfully
+    400 - invalid email
+    409 - user exist,
+    500 - invalid phone number,
     """
     registration_url = 'https://proverkacheka.nalog.ru:9999/v1/mobile/users/signup'
     data = {
@@ -153,8 +168,10 @@ def registration_fns(email: str, name: str, phone: str) -> str:
 
 def recovery_pass(phone: str) -> str:
     """"
-    Функция востановления пароля ФНС
-    Ответы сервера: 204 - Успешно, 404 - Not found
+    Recovery password from FNS
+    Status code
+    204 - successfully,
+    404 - user not found
     """
     recovery_url = 'https://proverkacheka.nalog.ru:9999/v1/mobile/users/restore'
     data = {'phone': phone}
@@ -170,3 +187,25 @@ def recovery_pass(phone: str) -> str:
         return 'Сетевая ошибка'
     except ValueError:
         return 'Незарегистрированная учетная запись'
+
+
+def qr_parser(qr_text: str) -> Dict:
+    """ Parse data from QR code"""
+    receipt_data = {}
+    try:
+        data = urllib.urlparse(qr_text)
+        receipt_params = urllib.parse_qs(data.path, strict_parsing=True)
+        for key, values in receipt_params.items():
+            receipt_data[key] = values[0]
+        #  Из QR кода должны приходить ровно 6 ть параметров
+        assert len(receipt_data) == 6
+    except AssertionError:
+        print('Количество параметров в QR коде не верное')
+        return {}
+    except ValueError:
+        print('Информация в QR коде не в формате параметр=значение')
+        return {}
+    except AttributeError:
+        print('QR код передан не в строковом формате')
+        return {}
+    return receipt_data
