@@ -1,4 +1,5 @@
-from webapp import create_app
+"""WSGI."""
+from webapp.application import create_app
 
 app = create_app()
 

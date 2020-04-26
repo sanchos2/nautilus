@@ -1,11 +1,12 @@
+"""Statistic views."""
 from datetime import datetime
+
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
-from webapp import db
+from webapp.db import db
 from webapp.receipt.models import Category, Purchase, Receipt
-
 
 blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 
@@ -13,13 +14,14 @@ blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 @blueprint.route('/my-outlay')
 @login_required
 def my_outlay():
-    """Render page with statistics with my outlay"""
+    """Render page with statistics with my outlay."""
     title = 'Мои расходы'
     # Отчет № 1 Сумма покупок за месяц(период) по пользователю
-    # select sum(purchase.sum) from purchase where date between '2020-04-10' and now();
+    # select sum(purchase.sum) from purchase
+    # where date between '2020-04-10' and now();
     start_date = '2020-02-10'
     end_date = datetime.now()
-    query_sum_purchase = db.session.query(
+    query_sum_purchase = db.session.query(  # noqa: WPS221
         func.sum(Purchase.sum)
     ).filter(
         Purchase.user_id == current_user.id
@@ -33,7 +35,7 @@ def my_outlay():
     # where date between '2020-04-20' and now()
     # group by c.category
     # order by sm desc;
-    query_purchase_category = db.session.query(
+    query_purchase_category = db.session.query(  # noqa: WPS221
         Category.category, func.sum(Receipt.sum) / 100
     ).join(
         Purchase, Purchase.id == Receipt.purchase_id
@@ -49,7 +51,9 @@ def my_outlay():
         Category.category
     ).all()
 
-    return render_template('statistic/my_outlay.html',
-                           page_title=title,
-                           query_purchase=query_sum_purchase,
-                           query_category=query_purchase_category)
+    return render_template(
+        'statistic/my_outlay.html',
+        page_title=title,
+        query_purchase=query_sum_purchase,
+        query_category=query_purchase_category,
+    )

@@ -1,3 +1,4 @@
+"""Receipt models."""
 from sqlalchemy.orm import relationship
 from sqlalchemy_utils import LtreeType
 
@@ -5,16 +6,21 @@ from webapp.db import db
 
 
 class Purchase(db.Model):
-    """Purchase model"""
+    """Purchase model."""
+
     # fn_number - fn, fd_number - i, fpd_number - fp
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'), index=True)
+    id = db.Column(db.Integer, primary_key=True)  # noqa: WPS125
+    user_id = db.Column(
+        db.Integer,
+        db.ForeignKey('user.id', ondelete='CASCADE'),
+        index=True,
+    )
     fn_number = db.Column(db.String)
     fd_number = db.Column(db.String)
     fpd_number = db.Column(db.String)
     receipt_type = db.Column(db.String)
     date = db.Column(db.DateTime)
-    sum = db.Column(db.Float)
+    sum = db.Column(db.Float)  # noqa: WPS125
     loaded = db.Column(db.String)
     organization = db.Column(db.String)
     tree = db.Column(db.Integer, db.ForeignKey('category_tree.id'), index=True)
@@ -25,19 +31,30 @@ class Purchase(db.Model):
         return self.organization
 
     def __repr__(self):
-        return f'<Покупка - {self.id}, за дату - {self.date}, на сумму - {self.sum}, валидность - {self.loaded}'
+        return '<Покупка-{0}, за дату-{1}, на сумму-{2}, валид-{3}'.format(
+            self.id, self.date, self.sum, self.loaded,
+        )
 
 
 class Receipt(db.Model):
-    """Receipt model"""
-    id = db.Column(db.Integer, primary_key=True)
-    purchase_id = db.Column(db.Integer, db.ForeignKey('purchase.id', ondelete='CASCADE'), index=True)
+    """Receipt model."""
+
+    id = db.Column(db.Integer, primary_key=True)  # noqa: WPS125
+    purchase_id = db.Column(
+        db.Integer,
+        db.ForeignKey('purchase.id', ondelete='CASCADE'),
+        index=True,
+    )
     product = db.Column(db.String)
     price = db.Column(db.Integer)
     quantity = db.Column(db.Float)
-    sum = db.Column(db.Integer)
+    sum = db.Column(db.Integer)  # noqa: WPS125
     category = db.Column(db.Integer, db.ForeignKey('category.id'), index=True)
-    subcategory = db.Column(db.Integer, db.ForeignKey('subcategory.id'), index=True)
+    subcategory = db.Column(
+        db.Integer,
+        db.ForeignKey('subcategory.id'),
+        index=True,
+    )
 
     purchase = relationship('Purchase', backref='receipts')
     category_name = relationship('Category', backref='receipts')
@@ -50,8 +67,9 @@ class Receipt(db.Model):
 
 
 class Category(db.Model):
-    """Category model"""
-    id = db.Column(db.Integer, primary_key=True)
+    """Category model."""
+
+    id = db.Column(db.Integer, primary_key=True)  # noqa: WPS125
     category = db.Column(db.String)
 
     def __str__(self):
@@ -62,9 +80,14 @@ class Category(db.Model):
 
 
 class Subcategory(db.Model):
-    """Subcategory model"""
-    id = db.Column(db.Integer, primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id', ondelete='CASCADE'), index=True)
+    """Subcategory model."""
+
+    id = db.Column(db.Integer, primary_key=True)  # noqa: WPS125
+    category_id = db.Column(
+        db.Integer,
+        db.ForeignKey('category.id', ondelete='CASCADE'),
+        index=True,
+    )
     subcategory = db.Column(db.String)
 
     def __str__(self):
@@ -75,9 +98,11 @@ class Subcategory(db.Model):
 
 
 class CategoryTree(db.Model):
-    """Category model"""
-    # перед добавлением таблицы в базе установить расширение: create extension if not exists ltree;
-    id = db.Column(db.Integer, primary_key=True)
+    """Category model."""
+
+    # перед добавлением таблицы в базе установить расширение:
+    # create extension if not exists ltree;
+    id = db.Column(db.Integer, primary_key=True)  # noqa: WPS125
     name = db.Column(db.String, nullable=False)
     path = db.Column(LtreeType, nullable=False)
 
