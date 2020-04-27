@@ -6,5 +6,4 @@ before_install:
 install:
   - poetry install
 script:
-  - poetry run flake8 webapp
-  - poetry run pytest
+  - poetry run pytest tests/
