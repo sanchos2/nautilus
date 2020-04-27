@@ -6,6 +6,6 @@ before_install:
 install:
   - poetry install
 script:
-  - poetry run pytest --cov=./webapp
+  - poetry run pytest --cov=./ tests/tests.py
 after_success:
   - codecov
