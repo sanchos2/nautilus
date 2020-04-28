@@ -46,8 +46,8 @@ def test_format_date():
     from datetime import datetime
     assert format_date('20140220T1803') == datetime(2014, 2, 20, 18, 3)
     assert format_date('20140220T180305') == datetime(2014, 2, 20, 18, 3, 5)
-    assert format_date('') == datetime.now()
-    assert format_date('12345') == datetime.now()
+    assert format_date('') == datetime.now().replace(microsecond=0)
+    assert format_date('12345') == datetime.now().replace(microsecond=0)
 
 
 def test_convert_date_to_fns_format():

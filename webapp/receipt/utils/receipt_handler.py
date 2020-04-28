@@ -24,7 +24,7 @@ def format_date(raw_datetime: str) -> datetime:
         return datetime.strptime(raw_datetime, '%Y%m%dT%H%M%S')  # noqa: WPS323
     except ValueError:
         print('Не возможно распарсить строку datetime')
-        return datetime.now()
+        return datetime.now().replace(microsecond=0)
 
 
 def purchase_valid_handler(fn_number, receipt_type, fd_number, fpd_number, date, sum):  # noqa: WPS125, WPS210, WPS211
