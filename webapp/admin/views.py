@@ -3,7 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, url_for
 
 from webapp.db import db
 from webapp.admin.forms import CategoryForm, SubcategoryForm
-from webapp.receipt.models import Category, Subcategory
+from webapp.receipt.models import Category, Subcategory, CategorySubcategory
 from webapp.user.decorators import admin_required
 
 blueprint = Blueprint('admin', __name__, url_prefix='/admin')
@@ -52,10 +52,16 @@ def subcategory_add():
     subcategory_form = SubcategoryForm()
     if subcategory_form.validate_on_submit():
         new_subcategory = Subcategory(
-            category_id=subcategory_form.category.data,
             subcategory=subcategory_form.subcategory.data,
         )
+
         db.session.add(new_subcategory)
+        db.session.commit()
+        new_relation = CategorySubcategory(
+            category_id=subcategory_form.category.data,
+            subcategory_id=new_subcategory.id,
+        )
+        db.session.add(new_relation)
         db.session.commit()
         flash('Субкатегория добавлена')
         return redirect(url_for('admin.admin_index'))

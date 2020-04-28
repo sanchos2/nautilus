@@ -6,7 +6,7 @@ from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from webapp.db import db
-from webapp.receipt.models import Category, Purchase, Receipt
+from webapp.receipt.models import Category, Purchase, PurchaseCategory
 
 blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 
@@ -28,19 +28,22 @@ def my_outlay():
     ).filter(
         Purchase.date.between(start_date, end_date)
     ).scalar()
-    # Отчет № 2 сумма покупок за месяц(период) по категориям товаров
-    # select c.category, sum(r.sum) / 100 as sm
-    # from purchase as p inner join receipt as r on p.id = r.purchase_id
-    # left outer join category as c on r.category = c.id
-    # where date between '2020-04-20' and now()
+    # Отчет № 2 сумма покупок за месяц(период) по покупкам и их категориям
+    # select c.category, sum(p.sum) as sm
+    # from purchase as p left outer join purchase_category as pc
+    # on p.id = pc.purchase_id
+    # left outer join category as c
+    # on pc.category_id = c.id
+    # where date between '2020-01-20' and now()
     # group by c.category
     # order by sm desc;
+
     query_purchase_category = db.session.query(  # noqa: WPS221
-        Category.category, func.sum(Receipt.sum) / 100
+        Category.category, func.sum(Purchase.sum)
     ).join(
-        Purchase, Purchase.id == Receipt.purchase_id
+        PurchaseCategory, Purchase.id == PurchaseCategory.purchase_id, isouter=True
     ).join(
-        Category, Receipt.category == Category.id, isouter=True
+        Category, PurchaseCategory.category_id == Category.id, isouter=True
     ).filter(
         Purchase.date.between(start_date, end_date)
     ).filter(

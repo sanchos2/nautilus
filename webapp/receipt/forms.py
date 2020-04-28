@@ -43,7 +43,7 @@ class PurchaseForm(FlaskForm):
 class AddCategoryForm(FlaskForm):
     """Add category to purchase."""
 
-    receipt_id = StringField('ID позиции чека', validators=[DataRequired()])
+    purchase_id = StringField('ID позиции чека', validators=[DataRequired()])
     category = NonValidatingSelectField(
         'Категория',
         choices=[],

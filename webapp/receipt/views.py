@@ -3,7 +3,7 @@ from flask import Blueprint, flash, redirect, render_template, request
 from flask_login import current_user, login_required
 
 from webapp.db import db
-from webapp.receipt.models import Category, Purchase, Receipt
+from webapp.receipt.models import Category, Purchase, Receipt, PurchaseCategory
 from webapp.receipt.forms import AddCategoryForm, PurchaseForm
 
 blueprint = Blueprint('receipt', __name__, url_prefix='/receipt')
@@ -15,6 +15,11 @@ def my_receipt():
     """Render my receipt page."""
     title = 'Мои покупки'
     form = PurchaseForm()
+    form_category = AddCategoryForm()
+    category_choices = Category.query.all()
+    form_category.category.choices = [
+        (category.id, category.category) for category in category_choices
+    ]
     my_purchase = Purchase.query.filter(
         Purchase.user_id == current_user.id
     ).all()
@@ -23,6 +28,7 @@ def my_receipt():
         page_title=title,
         purchase=my_purchase,
         form=form,
+        form_category=form_category,
     )
 
 
@@ -56,6 +62,23 @@ def qrscaner():
         'receipt/qrscaner.html',
         page_title=title,
     )
+
+
+@blueprint.route('/commit-category-to-purchase', methods=['POST'])
+@login_required
+def commit_category_to_purchase():
+    """Add a category to the purchase and write to a database."""
+    form_category = AddCategoryForm()
+    if form_category.validate_on_submit():
+        purchase = Purchase.query.get(form_category.purchase_id.data)
+        category = Category.query.get(form_category.category.data)
+        new_relation = PurchaseCategory(purchase_id=purchase.id, category_id=category.id)
+        db.session.add(new_relation)
+        db.session.commit()
+        flash('Категория добавлена')
+        return redirect(request.referrer)
+    flash('Категория НЕ добавлена')
+    return redirect(request.referrer)
 
 
 @blueprint.route('/commit-category-to-receipt', methods=['POST'])

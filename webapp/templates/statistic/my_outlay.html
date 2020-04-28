@@ -3,7 +3,6 @@
 <div class="container">
     <h2>{{ page_title }}</h2>
     Всего покупок на {{query_purchase}} рублей
-    {{ list }}
 </div>
 <div class="chart-container" style="position: relative; height:50vh; width:50vw">
     <canvas id="myChart"></canvas>
@@ -15,7 +14,7 @@
         type: 'bar',
         data: {
 
-            labels: [ {% for items in query_category %} '{{items[0]}}', {% endfor %} ],
+            labels: [{% for items in query_category %} '{{items[0]}}', {% endfor %}],
             datasets: [{
                 label: 'Потрачено',
                 data: [{% for items in query_category %} '{{items[1]}}', {% endfor %} ],
@@ -57,7 +56,13 @@
                 borderWidth: 1
             }]
         },
-        options: {scales: {yAxes: [{ticks: {eginAtZero: true}}]}}
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {beginAtZero: true}
+                }]
+            }
+        }
     }
         );
 </script>

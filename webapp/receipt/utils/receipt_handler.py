@@ -216,7 +216,7 @@ def registration_fns(email: str, name: str, phone: str) -> str:
         return 'Пользователь уже создан или неправильный телефон / email'
 
 
-def recovery_pass(phone: str) -> str:
+def recovery_pass(phone: str) -> str:  # noqa: WPS231
     """Recovery password from FNS.
 
     Status code
@@ -231,7 +231,7 @@ def recovery_pass(phone: str) -> str:
 
     """
     recovery_url = 'https://proverkacheka.nalog.ru:9999/v1/mobile/users/restore'
-    if len(phone) != 12:
+    if len(phone) != 12:  # noqa: WPS504
         return 'Не верное количество цифр в номере телефона'
     else:
         phone_data = {'phone': phone}
