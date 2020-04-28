@@ -231,18 +231,21 @@ def recovery_pass(phone: str) -> str:
 
     """
     recovery_url = 'https://proverkacheka.nalog.ru:9999/v1/mobile/users/restore'
-    phone_data = {'phone': phone}
-    try:
-        recovery_request = requests.post(recovery_url, json=phone_data)
-        status_code = recovery_request.status_code
-        text = recovery_request.text
-        if status_code != 204:
-            return text
-        return 'Запрос на восстановления пароля выполнен успешно. Ожидайте СМС'
-    except requests.RequestException:
-        return 'Сетевая ошибка'
-    except ValueError:
-        return 'Незарегистрированная учетная запись'
+    if len(phone) != 12:
+        return 'Не верное количество цифр в номере телефона'
+    else:
+        phone_data = {'phone': phone}
+        try:
+            recovery_request = requests.post(recovery_url, json=phone_data)
+            status_code = recovery_request.status_code
+            text = recovery_request.text
+            if status_code != 204:
+                return text
+            return 'Запрос на восстановления пароля выполнен успешно. Ожидайте СМС'
+        except requests.RequestException:
+            return 'Сетевая ошибка'
+        except ValueError:
+            return 'Незарегистрированная учетная запись'
 
 
 def qr_parser(qr_text: str) -> Dict:
