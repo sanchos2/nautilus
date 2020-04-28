@@ -21,6 +21,13 @@ pytest = "^5.4.1"
 gunicorn = "^20.0.4"
 psycopg2-binary = "^2.8.5"
 celery = {extras = ["redis"], version = "^4.4.2"}
+sqlalchemy-utils = "^0.36.3"
+flake8 = "^3.7.9"
+wemake-python-styleguide = "^0.14.0"
+codecov = "^2.0.22"
+pytest-cov = "^2.8.1"
+pytest-flask = "^1.0.0"
+pytest-mock = "^3.1.0"
 
 [tool.poetry.dev-dependencies]
 

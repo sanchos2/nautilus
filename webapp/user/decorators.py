@@ -1,11 +1,13 @@
+"""Decorator admin_required."""
 from functools import wraps
 
 from flask import current_app, flash, request, redirect, url_for
 from flask_login import config, current_user
 
 
-def admin_required(func):
-    @wraps(func)
+def admin_required(func):  # noqa: WPS212, WPS231
+    """Admin required decorator."""
+    @wraps(func)  # noqa: WPS430
     def decorated_view(*args, **kwargs):
         if request.method in config.EXEMPT_METHODS:
             return func(*args, **kwargs)

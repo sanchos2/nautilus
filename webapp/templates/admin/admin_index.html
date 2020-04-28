@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger" role="alert">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+    <h4>Админка</h4>
+    <div class="row">
+        <div class="col-sm">
+            <table class="table table-striped">
+                <tr>
+                    <thead>
+                    <th scope="col">ID</th>
+                    <th scope="col">Категория</th>
+                    </thead>
+                </tr>
+                {% for items in category_list %}
+                <tr>
+                    <tbody>
+                    <td>{{ items.id }}</td>
+                    <td>{{ items.category }}</td>
+                    </td>
+                    </tbody>
+                </tr>
+                {% endfor %}
+            </table>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-category-modal-sm">
+                Добавить категорию продукта
+            </button>
+            <div class="modal fade bd-category-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <form action="{{ url_for('admin.category_add') }}" method="post">
+                            {{ category_form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ category_form.category.label }} <br>
+                                {{ category_form.category() }}
+                            </div>
+                            <p> {{ category_form.submit() }} </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm">
+            <table class="table table-striped">
+                <tr>
+                    <thead>
+                    <th scope="col">ID</th>
+                    <th scope="col">Категория</th>
+                    <th scope="col">Субкатегория</th>
+                    </thead>
+                </tr>
+                {% for items in subcategory_list %}
+                <tr>
+                    <tbody>
+                    <td>{{ items.id }}</td>
+                    <td>{{ items.category[0] }}</td>
+                    <td>{{ items.subcategory }}</td>
+                    </td>
+                    </tbody>
+                </tr>
+                {% endfor %}
+            </table>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-subcat-modal-sm">
+                Добавить субкатегорию
+            </button>
+            <div class="modal fade bd-subcat-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <form action="{{ url_for('admin.subcategory_add') }}" method="post">
+                            {{ subcategory_form.hidden_tag() }}
+                            <div class="form-group">
+                                {{ subcategory_form.category.label }} <br>
+                                {{ subcategory_form.category }}
+                            </div>
+                            <div class="form-group">
+                                {{ subcategory_form.subcategory.label }} <br>
+                                {{ subcategory_form.subcategory() }}
+                            </div>
+                            <p> {{ subcategory_form.submit() }} </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

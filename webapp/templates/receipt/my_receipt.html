@@ -18,6 +18,8 @@
         <th scope="col">Дата</th>
         <th scope="col">Контрагент</th>
         <th scope="col">Сумма</th>
+        <th scope="col">Категория</th>
+        <th scope="col">Действие</th>
         </thead>
     </tr>
     {% for items in purchase %}
@@ -26,6 +28,43 @@
         <td><a href="{{ url_for('receipt.my_detailed_receipt', purchase=items.id) }}">{{ items.date }}</a></td>
         <td><a href="{{ url_for('receipt.my_detailed_receipt', purchase=items.id) }}">{{ items.organization }}</a></td>
         <td><a href="{{ url_for('receipt.my_detailed_receipt', purchase=items.id) }}">{{ items.sum }}</a></td>
+        <td>{{ items.category[0] }}</td>
+        <td>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modwin_{{items.id}}">
+                Категория
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="modwin_{{items.id}}" tabindex="-1" role="dialog"
+                 aria-labelledby="CategoryModalLabel"
+                 aria-hidden="true">
+                {{items.id}}
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="CategoryModalLabel">Выбор категории покупки:</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('receipt.commit_category_to_purchase') }}" method="post">
+                                {{ form_category.hidden_tag() }}
+                                <div class="form-group">
+                                    <input type="hidden" name="purchase_id" value="{{items.id}}">
+                                    {{ form_category.category.label }} <br>
+                                    {{ form_category.category() }}
+                                </div>
+                                <p> {{ form_category.submit() }} </p>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
         </tbody>
     </tr>
     {% endfor %}

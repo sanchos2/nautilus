@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <div class="alert alert-warning" role="alert">
+        {% for message in messages %}
+        {{ message }} <br>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
     <h2>{{ page_title }}</h2>
 </div>
 <table class="table table-striped">
@@ -11,7 +20,6 @@
         <th scope="col">Количество</th>
         <th scope="col">Сумма</th>
         <th scope="col">Категория</th>
-        <th scope="col">Субкатегория</th>
         </thead>
     </tr>
     {% for items in receipt %}
@@ -21,10 +29,45 @@
         <td>{{ '%0.2f'| format(items.price/100) }}</td>
         <td>{{ items.quantity }}</td>
         <td>{{ '%0.2f'| format(items.sum/100) }}</td>
-        <td>{{ items.category }}</td>
-        <td>{{ items.subcategory }}</td>
+        <td>{{ items }}</td>
+        <td>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modwin_{{items.id}}" >
+                Изменить
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="modwin_{{items.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                {{items.id}}
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Я потратил денежки на:</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('receipt.commit_category_to_receipt') }}" method="post">
+                                {{ form.hidden_tag() }}
+                                <div class="form-group">
+                                    <input type="hidden" name="receipt_id" value="{{items.id}}">
+                                    {{ form.category.label }} <br>
+                                    {{ form.category() }}
+                                </div>
+                                <p> {{ form.submit() }} </p>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </td>
         </tbody>
     </tr>
     {% endfor %}
 </table>
+
 {% endblock %}

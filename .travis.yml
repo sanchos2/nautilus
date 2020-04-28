@@ -1,0 +1,11 @@
+language: python
+python:
+  - "3.7"
+before_install:
+  - pip install poetry
+install:
+  - poetry install
+script:
+  - poetry run pytest --cov=./ tests/
+after_success:
+  - codecov
