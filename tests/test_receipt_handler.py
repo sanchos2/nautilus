@@ -1,7 +1,5 @@
 import pytest
 
-from datetime import datetime
-
 from webapp.receipt.utils.receipt_handler import *
 
 
@@ -45,6 +43,7 @@ def test_purchase_valid_handler():
 
 
 def test_format_date():
+    from datetime import datetime
     assert format_date('20140220T1803') == datetime(2014, 2, 20, 18, 3)
     assert format_date('20140220T180305') == datetime(2014, 2, 20, 18, 3, 5)
     assert format_date('') == datetime.now()
