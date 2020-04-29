@@ -11,7 +11,7 @@ from webapp.receipt.models import Category, Purchase, PurchaseCategory, Subcateg
 blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 
 
-@blueprint.route('/my-outlay')
+@blueprint.route('/my-outlay')  # noqa: WPS210
 @login_required
 def my_outlay():
     """Render page with statistics with my outlay."""
