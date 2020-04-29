@@ -50,3 +50,15 @@ class AddCategoryForm(FlaskForm):
         render_kw={'class': 'form-control'},
     )
     submit = SubmitField('Отправить', render_kw={'class': 'btn btn-primary'})
+
+
+class AddSubcategoryForm(FlaskForm):
+    """Add subcategory to receipt."""
+
+    receipt_id = StringField('ID позиции чека', validators=[DataRequired()])
+    subcategory = NonValidatingSelectField(
+        'Субкатегория',
+        choices=[],
+        render_kw={'class': 'form-control'},
+    )
+    submit = SubmitField('Отправить', render_kw={'class': 'btn btn-primary'})

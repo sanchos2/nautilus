@@ -28,7 +28,7 @@ def my_outlay():
     ).filter(
         Purchase.date.between(start_date, end_date)
     ).scalar()
-    # Отчет № 2 сумма покупок за месяц(период) по покупкам и их категориям
+    # Отчет № 2 сумма покупок за месяц(период) по сумме покупкам и их категориям
     # select c.category, sum(p.sum) as sm
     # from purchase as p left outer join purchase_category as pc
     # on p.id = pc.purchase_id

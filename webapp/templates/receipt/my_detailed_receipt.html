@@ -20,6 +20,8 @@
         <th scope="col">Количество</th>
         <th scope="col">Сумма</th>
         <th scope="col">Категория</th>
+        <th scope="col">Субкатегория</th>
+        <th scope="col">Действие</th>
         </thead>
     </tr>
     {% for items in receipt %}
@@ -29,7 +31,8 @@
         <td>{{ '%0.2f'| format(items.price/100) }}</td>
         <td>{{ items.quantity }}</td>
         <td>{{ '%0.2f'| format(items.sum/100) }}</td>
-        <td>{{ items }}</td>
+        <td>{{ items.purchase.category[0] }}</td>
+        <td>{{ items.subcategory[0] }}</td>
         <td>
             <!-- Button trigger modal -->
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modwin_{{items.id}}" >
@@ -42,18 +45,18 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Я потратил денежки на:</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Выберете субкатегорию:</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{{ url_for('receipt.commit_category_to_receipt') }}" method="post">
+                            <form action="{{ url_for('receipt.commit_subcategory_to_receipt') }}" method="post">
                                 {{ form.hidden_tag() }}
                                 <div class="form-group">
                                     <input type="hidden" name="receipt_id" value="{{items.id}}">
-                                    {{ form.category.label }} <br>
-                                    {{ form.category() }}
+                                    {{ form.subcategory.label }} <br>
+                                    {{ form.subcategory() }}
                                 </div>
                                 <p> {{ form.submit() }} </p>
                             </form>

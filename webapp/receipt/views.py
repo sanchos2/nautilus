@@ -3,8 +3,8 @@ from flask import Blueprint, flash, redirect, render_template, request
 from flask_login import current_user, login_required
 
 from webapp.db import db
-from webapp.receipt.models import Category, Purchase, Receipt, PurchaseCategory
-from webapp.receipt.forms import AddCategoryForm, PurchaseForm
+from webapp.receipt.models import Category, Purchase, Receipt, PurchaseCategory, Subcategory, ReceiptSubcategory
+from webapp.receipt.forms import AddCategoryForm, AddSubcategoryForm, PurchaseForm
 
 blueprint = Blueprint('receipt', __name__, url_prefix='/receipt')
 
@@ -37,10 +37,10 @@ def my_receipt():
 def my_detailed_receipt(purchase):
     """Render detailed receipt page."""
     title = 'Мой чек'
-    form = AddCategoryForm()
-    category_choices = Category.query.all()
-    form.category.choices = [
-        (category.id, category.category) for category in category_choices
+    form = AddSubcategoryForm()
+    subcategory_choices = Subcategory.query.all()
+    form.subcategory.choices = [
+        (subcategory.id, subcategory.subcategory) for subcategory in subcategory_choices
     ]
     my_det_receipt = Receipt.query.filter(
         Receipt.purchase_id == purchase
@@ -72,6 +72,13 @@ def commit_category_to_purchase():
     if form_category.validate_on_submit():
         purchase = Purchase.query.get(form_category.purchase_id.data)
         category = Category.query.get(form_category.category.data)
+        change_category = PurchaseCategory.query.filter(PurchaseCategory.purchase_id == purchase.id).first()
+        if change_category:
+            change_category.purchase_id = purchase.id
+            change_category.category_id = category.id
+            db.session.commit()
+            flash('Категория обновлена')
+            return redirect(request.referrer)
         new_relation = PurchaseCategory(purchase_id=purchase.id, category_id=category.id)
         db.session.add(new_relation)
         db.session.commit()
@@ -81,17 +88,25 @@ def commit_category_to_purchase():
     return redirect(request.referrer)
 
 
-@blueprint.route('/commit-category-to-receipt', methods=['POST'])
+@blueprint.route('/commit-subcategory-to-receipt', methods=['POST'])
 @login_required
-def commit_category_to_receipt():
-    """Add a category to the receipt and write to a database."""
-    form = AddCategoryForm()
-    if form.validate_on_submit():
-        receipt = Receipt.query.get(form.receipt_id.data)
-        receipt.category = form.category.data
-        db.session.add(receipt)
+def commit_subcategory_to_receipt():
+    """Add a subcategory to the receipt and write to a database."""
+    form_subcategory = AddSubcategoryForm()
+    if form_subcategory.validate_on_submit():
+        receipt = Receipt.query.get(form_subcategory.receipt_id.data)
+        subcategory = Subcategory.query.get(form_subcategory.subcategory.data)
+        change_subcategory = ReceiptSubcategory.query.filter(ReceiptSubcategory.receipt_id == receipt.id).first()
+        if change_subcategory:
+            change_subcategory.receipt_id = receipt.id
+            change_subcategory.subcategory_id = subcategory.id
+            db.session.commit()
+            flash('Субкатегория обновлена')
+            return redirect(request.referrer)
+        new_relation = ReceiptSubcategory(receipt_id=receipt.id, subcategory_id=subcategory.id)
+        db.session.add(new_relation)
         db.session.commit()
-        flash('Категория добавлена')
+        flash('Субкатегория добавлена')
         return redirect(request.referrer)
-    flash('Категория НЕ добавлена')
+    flash('Субкатегория НЕ добавлена')
     return redirect(request.referrer)
