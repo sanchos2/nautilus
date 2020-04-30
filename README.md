@@ -17,8 +17,16 @@
 - [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/) или [Gunicorn](https://gunicorn.org/)
 - [Nginx](https://nginx.org/)
 - [Supervisor](http://supervisord.org/)
+- Python 3.7 и выше
+
 
 ## Установка
+
+Установка Python 3.7 и необходимых пакетов (применительно к Ubuntu 18.04)
+```bash
+sudo apt install python3.7
+sudo apt install python3-pip python3.7-dev build-essential libssl-dev libffi-dev python3-setuptools python3.7-venv
+```
 
 Устанавливаем poetry
 ```bash
@@ -49,7 +57,7 @@ poetry run python create_admin.py
 ```
 Внести изменения в файл /webapp/templates/receipt/qrscaner.html
 ```
-fetch('http://ip_address_your_server/api/v1/qrscaner-process'
+fetch('http://ip_address_your_server/api/v1/qrscaner-process')
 ```
 
 ## Настройка
