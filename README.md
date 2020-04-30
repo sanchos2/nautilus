@@ -57,8 +57,8 @@ fetch('http://ip_address_your_server/api/v1/qrscaner-process'
 ```
 celery -A tasks worker -B --loglevel=INFO
 ```
-####Настроить uWSGI или Gunicorn
-####Настроить Nginx
+#### Настроить uWSGI или Gunicorn
+#### Настроить Nginx
 
-####Done!
+#### Done!
 
