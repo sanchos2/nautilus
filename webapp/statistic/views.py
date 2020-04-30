@@ -6,12 +6,12 @@ from flask_login import current_user, login_required
 from sqlalchemy import func
 
 from webapp.db import db
-from webapp.receipt.models import Category, Purchase, PurchaseCategory
+from webapp.receipt.models import Category, Purchase, PurchaseCategory, Subcategory, Receipt, ReceiptSubcategory
 
 blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 
 
-@blueprint.route('/my-outlay')
+@blueprint.route('/my-outlay')  # noqa: WPS210
 @login_required
 def my_outlay():
     """Render page with statistics with my outlay."""
@@ -28,7 +28,7 @@ def my_outlay():
     ).filter(
         Purchase.date.between(start_date, end_date)
     ).scalar()
-    # Отчет № 2 сумма покупок за месяц(период) по покупкам и их категориям
+    # Отчет № 2 сумма покупок за месяц(период) по сумме покупкам и их категориям
     # select c.category, sum(p.sum) as sm
     # from purchase as p left outer join purchase_category as pc
     # on p.id = pc.purchase_id
@@ -54,9 +54,30 @@ def my_outlay():
         Category.category
     ).all()
 
+    # отчет № 3 такой же как и №2 только по чекам и субкатегориям
+
+    query_receipt_subcategory = db.session.query(  # noqa: WPS221
+        Subcategory.subcategory, func.sum(Receipt.sum) / 100
+    ).join(
+        ReceiptSubcategory, Receipt.id == ReceiptSubcategory.receipt_id, isouter=True
+    ).join(
+        Subcategory, ReceiptSubcategory.subcategory_id == Subcategory.id, isouter=True
+    ).join(
+        Purchase, Receipt.purchase_id == Purchase.id
+    ).filter(
+        Purchase.date.between(start_date, end_date)
+    ).filter(
+        Purchase.user_id == 1
+    ).group_by(
+        Subcategory.subcategory
+    ).order_by(
+        Subcategory.subcategory
+    ).all()
+
     return render_template(
         'statistic/my_outlay.html',
         page_title=title,
         query_purchase=query_sum_purchase,
         query_category=query_purchase_category,
+        query_subcategory=query_receipt_subcategory,
     )

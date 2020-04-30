@@ -78,6 +78,7 @@ class Receipt(db.Model):
     sum = db.Column(db.Integer)  # noqa: WPS125
 
     purchase = relationship('Purchase', backref='receipts')
+    subcategory = relationship('Subcategory', secondary='receipt_subcategory', backref='receipts')
 
     def __str__(self):
         return self.product
