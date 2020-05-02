@@ -18,6 +18,6 @@ def get_receipt():
 
 
 @celery_app.on_after_configure.connect
-def setup_periodic_tasks(sender):
+def setup_periodic_tasks(sender, **kwargs):
     """Perform a periodic task."""
     sender.add_periodic_task(crontab(minute='*/2'), get_receipt.s())
