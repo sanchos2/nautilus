@@ -1,8 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ page_title }}</h2>
-<p id="qr"></p>
-<video width="30%" muted playsinline id="video"></video>
+
+<div align="center">
+    <h2>{{ page_title }}</h2>
+    <p id="qr"></p>
+    <video width="300" height="300" muted playsinline id="video"></video>
+</div>
     <script type="module">
         import QrScanner from '/static/qr-scanner.min.js';
         QrScanner.WORKER_PATH = '/static/qr-scanner-worker.min.js';

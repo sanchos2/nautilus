@@ -1,8 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-    <h2>{{ page_title }}</h2>
-    Всего покупок на {{query_purchase}} рублей
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-warning" role="alert">
+            {% for message in messages %}
+            {{ message }} <br>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+    <div class="row">
+        <div class="col-xs-6 col-lg-3">
+            <form action="{{ url_for('statistic.process_outlay') }}" method="post">
+                {{ form.hidden_tag() }}
+                <div class="form -group">
+                    {{ form.start_date.label }} <br>
+                    {{ form.start_date() }}
+                </div>
+                <div class="form-group">
+                    {{ form.end_date.label }} <br>
+                    {{ form.end_date() }}
+                </div>
+                <p> {{ form.submit() }} </p>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm">
+            <h2>{{ page_title }}</h2>
+            Всего покупок за {{ text_date }} на {{query_purchase}} рублей
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm">
             <div class="chart-container" style="position: relative; height:50vh; width:50vw">

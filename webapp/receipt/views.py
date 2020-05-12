@@ -22,6 +22,8 @@ def my_receipt():
     ]
     my_purchase = Purchase.query.filter(
         Purchase.user_id == current_user.id
+    ).order_by(
+        Purchase.date.desc()
     ).all()
     return render_template(
         'receipt/my_receipt.html',
