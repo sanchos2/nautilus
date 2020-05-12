@@ -1,5 +1,8 @@
 """Statistic views."""
-from datetime import datetime
+from datetime import date
+
+import locale
+import platform
 
 from flask import Blueprint, render_template
 from flask_login import current_user, login_required
@@ -16,11 +19,16 @@ blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 def my_outlay():
     """Render page with statistics with my outlay."""
     title = 'Мои расходы'
+    if platform.system() == 'Windows':
+        locale.setlocale(locale.LC_ALL, 'russian')
+    else:
+        locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
     # Отчет № 1 Сумма покупок за месяц(период) по пользователю
     # select sum(purchase.sum) from purchase
     # where date between '2020-04-10' and now();
-    start_date = '2020-02-10'
-    end_date = datetime.now()
+    start_date = date.today().replace(day=1)
+    end_date = date.today()
+    text_date = date.today().strftime('%B %Y')
     query_sum_purchase = db.session.query(  # noqa: WPS221
         func.sum(Purchase.sum)
     ).filter(
@@ -67,7 +75,7 @@ def my_outlay():
     ).filter(
         Purchase.date.between(start_date, end_date)
     ).filter(
-        Purchase.user_id == 1
+        Purchase.user_id == current_user.id
     ).group_by(
         Subcategory.subcategory
     ).order_by(
@@ -80,4 +88,5 @@ def my_outlay():
         query_purchase=query_sum_purchase,
         query_category=query_purchase_category,
         query_subcategory=query_receipt_subcategory,
+        text_date=text_date
     )
