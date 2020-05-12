@@ -145,7 +145,7 @@ class RecoveryFnsForm(FlaskForm):
     """Recovery FNS password form."""
 
     telephone = StringField(
-        'Ведите телефон в формате +7ХХХХХХХХХХ, указанный при регистрации',
+        'Введите телефон в формате +7ХХХХХХХХХХ, указанный при регистрации',
         validators=[DataRequired(), Length(min=12, max=12)],
         render_kw={'class': 'form-control'},
     )
