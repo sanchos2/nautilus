@@ -1,5 +1,6 @@
 """Utils for FNS."""
 from datetime import datetime
+from decimal import Decimal
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -47,7 +48,7 @@ def purchase_valid_handler(fn_number, receipt_type, fd_number, fpd_number, date,
          status_code, check_receipt.text.
 
     """
-    sum = int(float(sum) * 100)  # noqa: WPS125
+    sum = int(Decimal(str(sum)) * Decimal('100'))  # noqa: WPS125
     path = '/v1/ofds/*/inns/*/fss/' + fn_number + '/operations/' + receipt_type + '/tickets/' + fd_number  # noqa: WPS336
     query = 'fiscalSign=' + fpd_number + '&date=' + convert_date_to_fns_format(date) + '&sum=' + str(sum)  # noqa: WPS221, WPS336
     par = ('https', 'proverkacheka.nalog.ru:9999', path, '', query, '')
