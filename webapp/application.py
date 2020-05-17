@@ -42,7 +42,7 @@ def create_app():  # noqa: WPS213
     app.register_blueprint(statistic_blueprint)
 
     @login_manager.user_loader  # noqa: WPS430
-    def load_user(user_id):
+    def load_user(user_id):  # noqa: WPS430
         """Get user id."""
         return User.query.get(user_id)
     return app

@@ -43,7 +43,7 @@ def qrscaner_process():
 
 @blueprint.route('/process-manual-add-purchase', methods=['POST'])  # noqa: WPS210
 @login_required
-def process_manual_add_purchase():
+def process_manual_add_purchase():  # noqa: WPS210
     """Manually add purchase to database."""
     form = PurchaseForm()
     if form.validate_on_submit():

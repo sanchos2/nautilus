@@ -77,7 +77,7 @@ def profile(username):
 
 @blueprint.route('/process-profile', methods=['POST'])  # noqa: WPS210
 @login_required
-def process_profile():
+def process_profile():  # noqa: WPS210
     """Update user profile process."""
     form = ProfileForm()
     if form.validate_on_submit():
@@ -150,7 +150,7 @@ def process_register():
 
 @blueprint.route('/process-register-fns', methods=['POST'])  # noqa: WPS210
 @login_required
-def process_register_fns():
+def process_register_fns():  # noqa: WPS210
     """Registration in FNS process."""
     form = RegisterFnsForm()
     if form.validate_on_submit():

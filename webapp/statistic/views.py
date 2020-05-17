@@ -16,7 +16,7 @@ blueprint = Blueprint('statistic', __name__, url_prefix='/statistics')
 
 @blueprint.route('/my-outlay')  # noqa: WPS210
 @login_required
-def my_outlay():
+def my_outlay():  # noqa: WPS210
     """Render page with statistics with my outlay."""
     title = 'Мои расходы'
     if platform.system() == 'Windows':
@@ -42,7 +42,7 @@ def my_outlay():
 
 
 @blueprint.route('/process-outlay', methods=['POST'])  # noqa: WPS210
-def process_outlay():
+def process_outlay():  # noqa: WPS210
     """Date selection process."""
     title = 'Мои расходы'
     form = DateForm()
