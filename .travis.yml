@@ -2,10 +2,12 @@ language: python
 cache: pip
 python:
   - "3.7"
+  - "3.8"
 before_install:
   - pip install poetry
 install:
   - poetry install
+  - gem install mdl
 script:
   - poetry run flake8
   - poetry run pytest --cov=./ tests/
