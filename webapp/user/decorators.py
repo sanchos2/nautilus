@@ -8,7 +8,7 @@ from flask_login import config, current_user
 def admin_required(func):  # noqa: WPS212, WPS231
     """Admin required decorator."""
     @wraps(func)  # noqa: WPS430
-    def decorated_view(*args, **kwargs):
+    def decorated_view(*args, **kwargs):  # noqa: WPS430
         if request.method in config.EXEMPT_METHODS:
             return func(*args, **kwargs)
         elif current_app.config.get('LOGIN DISABLED'):

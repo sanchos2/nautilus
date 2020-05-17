@@ -2,12 +2,19 @@ language: python
 cache: pip
 python:
   - "3.7"
+  - "3.8"
 before_install:
   - pip install poetry
 install:
   - poetry install
+  - gem install mdl
+before_script:
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
 script:
-  - poetry run flake8
-  - poetry run pytest --cov=./ tests/
+  - make check
+after_script:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 after_success:
   - codecov
