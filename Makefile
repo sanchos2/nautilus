@@ -1,4 +1,3 @@
 check:
-	mdl README.md
-	poetry run flake8
+	poetry run flake8 webapp
 	poetry run pytest --cov=./ tests/
