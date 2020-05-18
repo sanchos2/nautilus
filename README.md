@@ -6,6 +6,7 @@
 [![codecov](https://codecov.io/gh/sanchos2/nautilus/branch/master/graph/badge.svg)](https://codecov.io/gh/sanchos2/nautilus)
 ![Python package](https://github.com/sanchos2/nautilus/workflows/Python%20package/badge.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a03b307b105a308b8673/maintainability)](https://codeclimate.com/github/sanchos2/nautilus/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a03b307b105a308b8673/test_coverage)](https://codeclimate.com/github/sanchos2/nautilus/test_coverage)
 
 [Демо версия сервиса](https://nautilus.com.ru) 
 
