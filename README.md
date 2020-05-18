@@ -1,7 +1,7 @@
 
 # NAUTILUS
 
-# Сервис контроля за личными расходами.
+# Сервис контроля за личными расходами
 
 [![wemake-python-styleguide](https://img.shields.io/badge/style-wemake-000000.svg)](https://github.com/wemake-services/wemake-python-styleguide)
 [![Build Status](https://travis-ci.org/sanchos2/nautilus.svg?branch=master)](https://travis-ci.org/sanchos2/nautilus)
@@ -50,6 +50,7 @@ poetry install
 ```
 
 В файле config.yaml в разделе PRODUCTION необходимо указать необходимые данные:
+
 - SQLALCHEMY_DATABASE_URI: 'postgresql://user:password@ip_address:5432/database'
 - SECRET_KEY: 'super_secret_key'
 
@@ -83,5 +84,5 @@ celery -A tasks worker -B --loglevel=INFO
 
 ### Настроить Nginx
 
-### Done!
+### Done
 
