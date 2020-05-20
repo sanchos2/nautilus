@@ -19,9 +19,13 @@ def qrscaner_process():
     data_from_qr = qr_parser(qr_text)
     # fn_number - fn, fd_number - i, fpd_number - fp
     try:
-        if Purchase.query.filter_by(fd_number=data_from_qr['i']).first():
+        if Purchase.query.filter(  # noqa: WPS337
+            Purchase.fd_number == data_from_qr['i'],
+            Purchase.fn_number == data_from_qr['fn'],
+            Purchase.fpd_number == data_from_qr['fp'],
+        ).first():
             # чека
-            raise ValueError('fd_number in Table!!!')
+            raise ValueError('Purchase already in database!')
         else:
             new_purchase = Purchase(
                 user_id=current_user.id,
@@ -36,7 +40,7 @@ def qrscaner_process():
             db.session.commit()
             flash('Покупка добавлена, содержимое появится в течении 2х минут')
     except ValueError:
-        print('fd_number уже есть в таблице! Чек не добавляем.')
+        print('Покупка уже таблице! Чек не добавляем.')
         flash('Этот чек Вы уже добавляли!')
     return make_response(jsonify(data_from_qr), 200)
 
