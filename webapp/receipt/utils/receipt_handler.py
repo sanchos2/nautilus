@@ -155,10 +155,10 @@ def add_receipt_db():  # noqa: WPS210, WPS231
                 receipt_data = get_purchase[1]
                 try:
                     organization = receipt_data['document']['receipt']['user']
-                    if len(organization.strip()) != 0:
-                        purchase.organization = organization
+                    if not organization.strip():  # noqa: WPS504
+                        purchase.organization = organization  # noqa: WPS220
                     else:
-                        purchase.organization = 'Продавец не указан'
+                        purchase.organization = 'Продавец не указан'  # noqa: WPS220
                     purchase.loaded = 'fetched'
                 except KeyError:
                     print('Отсутствует название продавца')

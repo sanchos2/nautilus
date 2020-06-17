@@ -13,7 +13,6 @@ blueprint = Blueprint('api', __name__, url_prefix='/api/v1')
 
 @blueprint.route('/qrscaner-process', methods=['POST'])
 @login_required
-
 def qrscaner_process():
     """Add data from QR code to database."""
     qr_text = request.data.decode('utf-8')
