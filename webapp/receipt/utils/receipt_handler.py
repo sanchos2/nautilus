@@ -35,6 +35,7 @@ def purchase_valid_handler(fn_number, receipt_type, fd_number, fpd_number, date,
     204 - Receipt found and valid
     406 - Receipt not found or not valid
     400 - Incorrect date or amount
+    406 - Client Error: Date or total incorrect
 
     Args:
         fn_number: from database
@@ -154,7 +155,10 @@ def add_receipt_db():  # noqa: WPS210, WPS231
                 receipt_data = get_purchase[1]
                 try:
                     organization = receipt_data['document']['receipt']['user']
-                    purchase.organization = organization
+                    if len(organization.strip()) != 0:
+                        purchase.organization = organization
+                    else:
+                        purchase.organization = 'Продавец не указан'
                     purchase.loaded = 'fetched'
                 except KeyError:
                     print('Отсутствует название продавца')

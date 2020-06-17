@@ -5,6 +5,7 @@ import yaml
 
 
 from flask import Flask
+from flask_cors import CORS
 from flask_login import LoginManager
 from flask_migrate import Migrate
 
@@ -29,6 +30,7 @@ def create_app():  # noqa: WPS213
     """Create Flask APP."""
     app = Flask(__name__)
     app.config.from_mapping(config_data['PRODUCTION'])
+    CORS(app)
     db.init_app(app)
     migrate = Migrate(app, db)  # noqa: F841
     login_manager = LoginManager()
